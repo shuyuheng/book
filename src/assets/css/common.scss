@@ -1,0 +1,59 @@
+.center {
+  &X {
+    display: flex;
+    justify-content: center;
+  }
+  &Y {
+    display: flex;
+    align-items: center;
+  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &LR {
+    display: flex;
+    justify-content: space-between;
+  }
+  &R {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+}
+html,
+body {
+  color: $main_font_color;
+  min-width: $min_width;
+  min-height: $min_height;
+  font-size: $default_font_size;
+}
+body {
+  // overflow-x: scroll;
+}
+// 过渡动画
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  transform: scale(0);
+}
+/* 改变主题色变量 */
+$--color-primary: $main_color;
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: "~element-ui/lib/theme-chalk/fonts";
+
+@import "~element-ui/packages/theme-chalk/src/index";
+.required {
+  &::before {
+    content: "*";
+    font-size: 0.8em;
+    color: $main_color_error1;
+    padding-right: 3px;
+  }
+}
+// 进入组件边框
+.selectBorder {
+  box-shadow: 0 0 20px 0 black inset;
+}
