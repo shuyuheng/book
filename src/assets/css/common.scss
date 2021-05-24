@@ -39,7 +39,7 @@ body {
   transform: scale(0);
 }
 /* 改变主题色变量 */
-$--color-primary: $main_color;
+// $--color-primary: $main_color;
 
 /* 改变 icon 字体路径变量，必需 */
 $--font-path: "~element-ui/lib/theme-chalk/fonts";
@@ -55,5 +55,13 @@ $--font-path: "~element-ui/lib/theme-chalk/fonts";
 }
 // 进入组件边框
 .selectBorder {
-  box-shadow: 0 0 20px 0 black inset;
+  box-shadow: 0 0 40px 10px rgba(skyblue, 1) inset;
+}
+
+// 组件层级
+.component {
+  z-index: 3;
+  .redact {
+    border: 1px dashed black;
+  }
 }

@@ -11,6 +11,7 @@
         :indexs="[]"
         :redact="true"
       />
+      <el-button @click="previewFn" style="width:300px;margin-top:40px;">预览</el-button>
     </div>
   </div>
 </template>
@@ -44,11 +45,20 @@ export default {
     eventBus.$on("delete", (indexs, item) => {
       this.delete(indexs, item);
     });
+    eventBus.$on("dragendEle", (indexs, item) => {
+      this.append(indexs, item);
+    });
   },
   methods: {
+    // 预览
+    previewFn() {
+      localStorage.setItem("pageData", JSON.stringify(this.pageData));
+      window.open('/Exhibition')
+    },
     // 添加数据
     append(indexs, itemOrignData) {
       let item = JSON.parse(JSON.stringify(itemOrignData));
+      console.log(item, "item");
       item.id = this.pageData.minID;
       this.pageData.minID++;
       if (!indexs.length) {
@@ -79,14 +89,21 @@ export default {
   display: flex;
   height: 100vh;
   .sidebar_box {
+    .title{
+      font-size: 24px;
+      line-height: 30px;
+    }
     width: 460px;
     padding: 24px;
+    overflow: scroll;
+    background-color: #dcdcdc;
   }
   .book_page {
     flex: 1;
     display: flex;
+    flex-direction: column;
+    padding-top: 60px;
     align-items: center;
-    justify-content: center;
   }
 }
 </style>

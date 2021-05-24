@@ -8,17 +8,18 @@
       :class="{ redact: redact }"
       v-for="(item, i) in children"
       :componentData="item.componentData"
-      :indexs="[...indexs, i]"
       :item="item"
       :redact="redact"
       :drawer.sync="drawer"
-      @dragend="dragend"
       @handleClose="handleClose(`com${item.id}`)"
-      :isDragstart="isDragstart"
       :ref="`com${item.id}`"
     >
-      <Utils
-        v-if="redact && indexs.length"
+      <utils
+        slot="utils"
+        v-if="redact"
+        :indexs="[...indexs, i]"
+        :item="item"
+        :isDragstart="isDragstart"
         @deleteFn="delComponent([...indexs, i], item)"
         @updateFn="openUpdate(`com${item.id}`)"
       />
@@ -34,7 +35,10 @@
 </template>
 
 <script>
+import Utils from "../Utils.vue";
 export default {
+  name: "ComponentContainer",
+  components: { Utils },
   props: {
     children: {
       type: Array,
@@ -59,27 +63,18 @@ export default {
       /* data default end */
     };
   },
-  created() {
-    this.init();
-  },
+  created() {},
   methods: {
-    init() {
-      // 监听拖拽开始
-      eventBus.$on("dragstart", (flag) => {
-        this.isDragstart = flag;
-      });
-    },
-    // 拖拽结束添加
-    dragend(indexs, item) {
-      this.isDragstart = false;
-      eventBus.$emit("append", indexs, item);
-    },
     delComponent(indexs, item) {
-      this.$confirm("此操作将删除该组件，是否继续?", "删除提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "error",
-      })
+      this.$confirm(
+        `此操作将删除${item.componentTitleStr}，是否继续?`,
+        "删除提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "error",
+        }
+      )
         .then(() => {
           eventBus.$emit("delete", indexs, item);
           this.$message({

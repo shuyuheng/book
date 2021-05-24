@@ -1,5 +1,5 @@
 <template>
-  <div class="exhibition">
+  <div class="exhibition center">
     <ComponentContainer
       :children.sync="pageData.components"
       :minID="pageData.minID"
@@ -17,45 +17,49 @@ export default {
           {
             id: 0,
             parentId: 0,
-            component: "Component1",
-            componentData: {
-              name: "舒榆衡",
-            },
+            component: "Page",
+            componentData: {},
             children: [
               {
-                id: 1,
+                id: 4,
                 parentId: 0,
-                component: "Component2",
-                componentData: {},
-                children: [
-                  {
-                    id: 2,
-                    parentId: 1,
-                    component: "Component1",
-                    componentData: {},
-                    children: [],
-                  },
-                ],
-              },
-              {
-                id: 3,
-                parentId: 0,
-                component: "Component2",
+                componentTitleStr: "图片组件",
+                component: "BookImage",
                 componentData: {
-                  name: "张冰雪",
+                  name: "舒榆衡",
+                  width: "100%",
+                  height: "280px",
+                  padding: "10px",
+                  margin: "0px",
+                  size: "cover",
+                  position: "center",
+                  value:
+                    "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
                 },
                 children: [],
               },
               {
-                id: 4,
+                id: 5,
                 parentId: 0,
-                component: "BookImage",
-                componentData: {
-                  value:
-                    "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg",
-                  width: "600px",
-                  height: "800px",
-                },
+                componentTitleStr: "文本组件",
+                component: "BookText",
+                componentData: { value: "我是文本组件，标签不能解析" },
+                children: [],
+              },
+              {
+                id: 6,
+                parentId: 0,
+                componentTitleStr: "文本组件",
+                component: "BookText",
+                componentData: { value: "我是文本组件，标签不能解析" },
+                children: [],
+              },
+              {
+                id: 7,
+                parentId: 0,
+                componentTitleStr: "文本组件",
+                component: "BookText",
+                componentData: { value: "我是文本组件，标签不能解析" },
                 children: [],
               },
             ],
@@ -64,12 +68,20 @@ export default {
       },
     };
   },
-  created() {},
+  created() {
+    let pageData = localStorage.getItem("pageData");
+    if (pageData) this.pageData = JSON.parse(pageData);
+  },
   methods: {},
 };
 </script>
 
-<style>
+<style lang="scss">
 .exhibition {
+  height: 100vh;
+  background-color: black;
+  &>.ComponentContainer{
+    background-color: #fff;
+  }
 }
 </style>
