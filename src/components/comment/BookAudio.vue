@@ -3,8 +3,8 @@
     class="BookAudio component"
     title="音频组件"
     :style="{
-      width: componentData.width,
-      height: componentData.height,
+      width: componentData.width + 'px',
+      height: componentData.width + 'px',
       margin: componentData.margin,
     }"
   >
@@ -16,8 +16,40 @@
         padding: componentData.padding,
       }"
     >
-      <div class="center" style="width: 1005;">
-        <audio :src="componentData.value" controls></audio>
+      <div class="center" style="width: 1005">
+        <audio ref="audio" :src="componentData.value" controls></audio>
+        <div
+          class="play_box"
+          :style="{
+            width: componentData.width + 'px',
+            height: componentData.width + 'px',
+          }"
+        >
+          <div
+            class="play_status"
+            :style="{ fontSize: componentData.width - 0 + 5 + 'px' }"
+          >
+            <i
+              class="el-icon-video-play"
+              v-if="!isPlay"
+              @click="changePlay(true)"
+            ></i>
+            <i
+              class="el-icon-video-pause"
+              v-else
+              :style="{ fontSize: componentData.width / 1.5 + 'px' }"
+              @click="changePlay(false)"
+            ></i>
+          </div>
+          <el-progress
+            v-if="isPlay"
+            :stroke-width="3"
+            type="circle"
+            :show-text="false"
+            :percentage="curtime"
+            :width="componentData.width"
+          ></el-progress>
+        </div>
       </div>
       <slot />
     </div>
@@ -37,30 +69,15 @@
     >
       <div style="padding: 20px" @click.stop>
         <el-form ref="form" label-width="80px">
-          <el-form-item label="宽度">
+          <el-form-item label="尺寸">
             <el-input
               v-model="componentData.width"
               style="width: 280px"
-            ></el-input
-            ><span style="font-size: 12px"> %/px</span>
-          </el-form-item>
-          <el-form-item label="高度">
-            <el-input
-              v-model="componentData.height"
-              style="width: 280px"
-            ></el-input
-            ><span style="font-size: 12px"> %/px</span>
+            ></el-input>
           </el-form-item>
           <el-form-item label="外边距">
             <el-input
               v-model="componentData.margin"
-              style="width: 280px"
-            ></el-input
-            ><span style="font-size: 12px"> %/px</span>
-          </el-form-item>
-          <el-form-item label="内边距">
-            <el-input
-              v-model="componentData.padding"
               style="width: 280px"
             ></el-input
             ><span style="font-size: 12px"> %/px</span>
@@ -91,18 +108,44 @@ export default {
   data() {
     return {
       drawer: false, // 修改弹窗
+      isPlay: false,
+      timer: null,
+      curtime: 0,
     };
   },
   created() {},
   methods: {
-    /* methods default end */
+    // 更改播放状态
+    changePlay(val) {
+      this.isPlay = val;
+      if (this.isPlay) {
+        this.$refs.audio.play();
+        this.getCurTime();
+      } else {
+        this.$refs.audio.pause();
+        this.getCurTime(false);
+      }
+
+      // console.log(this.$refs.audio);
+    },
+    getCurTime(flage = true) {
+      if (this.timer) clearInterval(this.timer);
+      if (!flage) return;
+      this.timer = setInterval(() => {
+        this.curtime =
+          (this.$refs.audio.currentTime / this.$refs.audio.duration) * 100;
+        if (this.$refs.audio.currentTime == this.$refs.audio.duration) {
+          this.curtime = 0;
+          this.changePlay(false);
+        }
+      }, 50);
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .BookAudio {
-  height: 200px;
   position: relative;
   user-select: none;
   .page_content {
@@ -114,6 +157,41 @@ export default {
     background-position: center;
     background-size: cover;
     position: relative;
+    audio {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -2;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .play_box {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      z-index: 0;
+      /deep/ .el-progress-circle__path {
+        transition: 0s !important;
+      }
+      .play_status {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #20a0ff;
+        line-height: 1;
+        vertical-align: middle;
+        transform: translate(0, 0);
+        .el-icon-video-pause {
+        }
+      }
+    }
   }
 }
 </style>

@@ -1,5 +1,10 @@
 <template>
-  <div class="Page">
+  <div
+    class="Page"
+    :style="{
+      transform: `scale(${zoom})`,
+    }"
+  >
     <div class="page_content">
       <slot />
     </div>
@@ -9,7 +14,12 @@
 
 <script>
 export default {
-  props: {},
+  props: {
+    zoom: {
+      type: [Number, String],
+      default: 1,
+    },
+  },
   data() {
     return {};
   },
@@ -24,6 +34,8 @@ export default {
   height: 1100px;
   position: relative;
   user-select: none;
+  background-color: #fff;
+  transform-origin: top left;
   .page_content {
     width: 100%;
     height: 100%;

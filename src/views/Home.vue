@@ -3,6 +3,19 @@
     <div class="sidebar_box">
       <div class="title">组件区域</div>
       <Sidebar />
+      <div class="center">
+        <el-button
+          @click="addPage"
+          type="text"
+          style="width: 300px; margin-top: 40px"
+          >添加页面</el-button
+        >
+      </div>
+      <div class="center">
+        <el-button @click="previewFn" style="width: 300px; margin-top: 40px"
+          >预览</el-button
+        >
+      </div>
     </div>
     <div class="book_page">
       <ComponentContainer
@@ -11,7 +24,6 @@
         :indexs="[]"
         :redact="true"
       />
-      <el-button @click="previewFn" style="width:300px;margin-top:40px;">预览</el-button>
     </div>
   </div>
 </template>
@@ -50,10 +62,19 @@ export default {
     });
   },
   methods: {
+    addPage() {
+      this.append([], {
+        id: 0,
+        parentId: 0,
+        component: "Page",
+        componentData: {},
+        children: [],
+      });
+    },
     // 预览
     previewFn() {
       localStorage.setItem("pageData", JSON.stringify(this.pageData));
-      window.open('/Exhibition')
+      window.open("/Exhibition");
     },
     // 添加数据
     append(indexs, itemOrignData) {
@@ -88,8 +109,14 @@ export default {
 .home {
   display: flex;
   height: 100vh;
+  padding-left: 460px;
   .sidebar_box {
-    .title{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 3;
+    .title {
       font-size: 24px;
       line-height: 30px;
     }

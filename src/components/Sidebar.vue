@@ -77,7 +77,7 @@ export default {
           component: "BookVideo",
           componentData: {
             value:
-              "https://video.699pic.com/videos/75/76/40/a_U1sxjzXuyWAj1591757640.MP4",
+              "https://img.tukuppt.com/video_show/10/00/71/4/5f684cd46b673.mp4",
             width: "auto",
             height: "100px",
             padding: "0px",
@@ -92,10 +92,8 @@ export default {
           component: "BookAudio",
           componentData: {
             value:
-              "https://video.699pic.com/videos/75/76/40/a_U1sxjzXuyWAj1591757640.MP4",
-            width: "auto",
-            height: "100px",
-            padding: "0px",
+              "https://img.tukuppt.com/newpreview_music/08/99/04/5c88da803211726129.mp3",
+            width: "60",
             margin: "0px",
           },
           children: [],
@@ -106,9 +104,7 @@ export default {
           componentTitleStr: "定位组件",
           component: "BookPosition",
           componentData: {
-            width: "200px",
-            height: "100px",
-            padding: "0px",
+            padding: "100px",
             margin: "0px",
             x: 0,
             y: 0,
@@ -135,9 +131,10 @@ export default {
       });
     },
     move(e) {
+      // console.log(e);
       this.movement = {
-        x: e.pageX,
-        y: e.pageY,
+        x: e.clientX,
+        y: e.clientY,
       };
       this.$nextTick(() => {
         this.show = true;
@@ -187,6 +184,8 @@ export default {
     left: 0px;
     width: 400px;
     transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 88;
     &::after {
       content: "";
       position: absolute;

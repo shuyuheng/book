@@ -5,8 +5,6 @@
     title="定位组件"
     ref="positionRef"
     :style="{
-      width: componentData.width,
-      height: componentData.height,
       left: componentData.x + 'px',
       top: componentData.y + 'px',
     }"
@@ -37,20 +35,6 @@
     >
       <div style="padding: 20px" @click.stop>
         <el-form ref="form" label-width="80px">
-          <el-form-item label="宽度">
-            <el-input
-              v-model="componentData.width"
-              style="width: 280px"
-            ></el-input
-            ><span style="font-size: 12px"> %/px</span>
-          </el-form-item>
-          <el-form-item label="高度">
-            <el-input
-              v-model="componentData.height"
-              style="width: 280px"
-            ></el-input
-            ><span style="font-size: 12px"> %/px</span>
-          </el-form-item>
           <el-form-item label="内边距">
             <el-input
               v-model="componentData.padding"
@@ -88,9 +72,7 @@ export default {
       isMove: false,
     };
   },
-  created() {
-    console.log(this.item,'item');
-  },
+  created() {},
   mounted() {
     if (this.redact) {
       window.addEventListener("mouseup", () => {
@@ -136,13 +118,12 @@ export default {
 
 <style lang="scss" scoped>
 .BookPosition {
-  height: 200px;
   position: absolute;
   user-select: none;
-  background-color: gray;
 
   &.redact {
     cursor: all-scroll;
+    background-color: rgba(gray, 0.3);
   }
   .page_content {
     width: 100%;

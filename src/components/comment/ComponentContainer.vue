@@ -13,6 +13,7 @@
       :drawer.sync="drawer"
       @handleClose="handleClose(`com${item.id}`)"
       :ref="`com${item.id}`"
+      :zoom="zoom"
     >
       <utils
         slot="utils"
@@ -53,6 +54,10 @@ export default {
     redact: {
       type: Boolean,
       default: false,
+    },
+    zoom: {
+      type: [Number,String],
+      default: 1,
     },
   },
   data() {
