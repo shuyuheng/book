@@ -110,7 +110,7 @@ export default {
           componentTitleStr: "定位组件",
           component: "BookPosition",
           componentData: {
-            padding: "100px",
+            padding: "30px",
             margin: "0px",
             x: 0,
             y: 0,

@@ -113,6 +113,7 @@
         :src="componentData.value"
         controls
         ref="video"
+        v-if="isPlay"
       ></video>
     </el-dialog>
   </div>

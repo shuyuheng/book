@@ -107,66 +107,11 @@ import "@/assets/js/lib/turn";
 export default {
   data() {
     return {
-      pageData: {
-        minID: 4,
-        components: [
-          {
-            id: 0,
-            parentId: 0,
-            component: "Page",
-            componentData: {},
-            children: [
-              {
-                id: 4,
-                parentId: 0,
-                componentTitleStr: "图片组件",
-                component: "BookImage",
-                componentData: {
-                  name: "舒榆衡",
-                  width: "100%",
-                  height: "280px",
-                  padding: "10px",
-                  margin: "0px",
-                  size: "cover",
-                  position: "center",
-                  value:
-                    "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
-                },
-                children: [],
-              },
-              {
-                id: 5,
-                parentId: 0,
-                componentTitleStr: "文本组件",
-                component: "BookText",
-                componentData: { value: "我是文本组件，标签不能解析" },
-                children: [],
-              },
-              {
-                id: 6,
-                parentId: 0,
-                componentTitleStr: "文本组件",
-                component: "BookText",
-                componentData: { value: "我是文本组件，标签不能解析" },
-                children: [],
-              },
-              {
-                id: 7,
-                parentId: 0,
-                componentTitleStr: "文本组件",
-                component: "BookText",
-                componentData: { value: "我是文本组件，标签不能解析" },
-                children: [],
-              },
-            ],
-          },
-        ],
-      },
+      pageData: "",
       curentZoom: 0.5,
       maxZoom: 3,
       minZoom: 0.3,
       curPage: 1,
-      timer: null,
       pages: 0,
       position: {
         x: 0,
@@ -182,7 +127,6 @@ export default {
   methods: {
     // 百分比缩放
     changeZoomPer(val) {
-      console.log(val);
       this.curentZoom = this.maxZoom * (val / 100);
       this.setZoom();
     },
@@ -305,7 +249,7 @@ export default {
   // 销毁
   destroyed() {
     window.removeEventListener("keydown", this.keydown);
-    window.removeEventListener("resize", this.keydown);
+    window.removeEventListener("resize", this.resizeChangeZoom);
     document.removeEventListener("mousewheel", this.mousewheel);
     document.removeEventListener("mousedown", this.mousedown);
     document.removeEventListener("mouseup", this.mouseup);

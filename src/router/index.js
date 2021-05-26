@@ -8,13 +8,23 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    redirect: '/Adaptive'
+  },
+  {
+    path: '/redact',
+    name: 'Home',
+    component: Home,
   },
   {
     path: '/Exhibition',
     name: 'Exhibition',
     component: () => import('../views/Exhibition.vue')
-  }
+  },
+  {
+    path: '/Adaptive',
+    name: 'Adaptive',
+    component: () => import('../views/Adaptive.vue')
+  },
 ]
 
 const router = new VueRouter({
