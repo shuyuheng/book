@@ -30,7 +30,15 @@
         :drawer="false"
         @handleClose="handleClose(`com${curComponent.id}`)"
         :ref="`com${curComponent.id}`"
-      />
+        :isDrage="true"
+      >
+        <ComponentContainer
+          :children.sync="curComponent.children"
+          :minID="0"
+          :indexs="[]"
+          :redact="true"
+        />
+      </component>
     </div>
   </div>
 </template>
@@ -129,10 +137,11 @@ export default {
       });
     },
     move(e) {
-      // console.log(e);
       this.movement = {
         x: e.clientX,
         y: e.clientY,
+        dataX: e.offsetX,
+        dataY: e.offsetY,
       };
       this.$nextTick(() => {
         this.show = true;
@@ -147,8 +156,14 @@ export default {
         this.dragend(item);
       };
     },
+    // 拖拽结束 添加
     dragend(item) {
-      eventBus.$emit("dragend", item);
+      let newItem = JSON.parse(JSON.stringify(item));
+      if (newItem.componentData.hasOwnProperty("x")) {
+        newItem.componentData.x = this.movement.dataX;
+        newItem.componentData.y = this.movement.dataY;
+      }
+      eventBus.$emit("dragend", newItem);
       this.curComponent = "";
       this.show = false;
       window.removeEventListener("mousemove", this.move);
@@ -161,12 +176,16 @@ export default {
 <style lang="scss" scoped>
 .sidebar {
   .component_item {
-    height: 30px;
-    background-color: skyblue;
+    height: 40px;
+    background-color: #3c4043;
     cursor: pointer;
     margin: 2px 0;
     position: relative;
     user-select: none;
+    color: white;
+    &:hover{
+      color: orange;
+    }
     .container {
       position: absolute;
       top: 0;

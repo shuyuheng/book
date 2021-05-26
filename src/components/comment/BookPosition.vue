@@ -1,7 +1,7 @@
 <template>
   <div
     class="BookPosition component"
-    :class="{ redact: redact }"
+    :class="{ redact: redact, isDrage: isDrage }"
     title="定位组件"
     ref="positionRef"
     :style="{
@@ -64,6 +64,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 是否在拖动状态
+    isDrage: {
+      type: Boolean,
+      default: false,
+    },
     /* props default end */
   },
   data() {
@@ -123,7 +128,14 @@ export default {
   z-index: 4;
   &.redact {
     cursor: all-scroll;
-    background-color: rgba(gray, 0.3);
+    background-color: rgba(orange, 0.3);
+    background-image: url('../../assets/img/opacity.png');
+    background-size: 200px;
+    background-position: center;
+  }
+  &.isDrage {
+    left: 0 !important;
+    top: 0 !important;
   }
 
   .page_content {

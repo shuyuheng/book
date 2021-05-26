@@ -109,8 +109,9 @@ export default {
 <style scoped lang="scss">
 .home {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   padding-left: 460px;
+  background-color: #444444;
   .sidebar_box {
     position: fixed;
     top: 0;
@@ -120,11 +121,13 @@ export default {
     .title {
       font-size: 24px;
       line-height: 30px;
+      color: white;
+      padding-bottom: 15px;
     }
     width: 460px;
     padding: 24px;
-    overflow: scroll;
-    background-color: #dcdcdc;
+    overflow: auto;
+    background-color: #444444;
   }
   .book_page {
     flex: 1;

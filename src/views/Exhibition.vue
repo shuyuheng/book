@@ -18,6 +18,22 @@
       <div :style="{ width: 800 * 2 * curentZoom + 'px' }">
         <div class="container">
           <div id="book">
+            <div class="harda" v-if="pageData.components.length < 3">START</div>
+            <div class="harda" v-if="pageData.components.length < 3">
+              <div>
+                <div style="text-align: center">前言</div>
+                <div
+                  style="
+                    font-size: 14px;
+                    padding-top: 20px;
+                    letter-spacing: 6px;
+                    line-height: 1.5;
+                  "
+                >
+                  书籍最少四页，不足的情况下将补充<br />《START》《前言》《END》
+                </div>
+              </div>
+            </div>
             <div
               class="page_box"
               v-for="(item, i) in pageData.components"
@@ -29,6 +45,7 @@
                 :zoom="curentZoom"
               />
             </div>
+            <div class="harda" v-if="pageData.components.length < 3">END</div>
           </div>
         </div>
       </div>
@@ -199,11 +216,24 @@ export default {
     },
     // 初始化书籍
     initBook() {
+      const that = this;
       $("#book").turn({
         width: 1600,
         height: 1100,
         autoCenter: true,
+        duration: 1600,
+        elevation: 50,
+        gradients: true,
         // ... plus any extra option you need
+        when: {
+          turned(event, page, view) {
+            if (page == 1) {
+              that.$nextTick(() => {
+                $("#book").turn("peel", "br");
+              });
+            }
+          },
+        },
       });
       // 获取页面数量
       this.pages = $("#book").turn("pages");
@@ -318,8 +348,8 @@ export default {
     }
     .container {
       width: 30000px;
-      .hard {
-        background-color: black;
+      .harda {
+        background-color: #3c4043;
         color: white;
         font-size: 60px;
         display: flex;

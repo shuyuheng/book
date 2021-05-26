@@ -172,6 +172,7 @@ export default {
 .BookVideo {
   position: relative;
   user-select: none;
+  display: inline-block;
   .page_content {
     width: 100%;
     height: 100%;

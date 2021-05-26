@@ -41,6 +41,10 @@ export default {
     height: 100%;
     overflow: visible;
     position: relative;
+    &:before {
+      content: "";
+      display: table;
+    }
   }
   &.redact {
     width: 802px;
