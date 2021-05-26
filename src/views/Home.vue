@@ -74,7 +74,8 @@ export default {
     // 预览
     previewFn() {
       localStorage.setItem("pageData", JSON.stringify(this.pageData));
-      window.open("/Exhibition");
+      let routeData = this.$router.resolve({ path: "/Exhibition" });
+      window.open(routeData.href, "_blank");
     },
     // 添加数据
     append(indexs, itemOrignData) {
