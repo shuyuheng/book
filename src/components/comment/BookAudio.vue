@@ -27,19 +27,23 @@
         >
           <div
             class="play_status"
-            :style="{ fontSize: componentData.width - 0 + 5 + 'px' }"
+            :style="{
+              width: componentData.width + 'px',
+              height: componentData.width + 'px',
+            }"
           >
-            <i
+            <img
               class="el-icon-video-play"
               v-if="!isPlay"
               @click="changePlay(true)"
-            ></i>
-            <i
+              src="../../assets/img/audioplay.png"
+            />
+            <img
               class="el-icon-video-pause"
               v-else
-              :style="{ fontSize: componentData.width / 1.5 + 'px' }"
               @click="changePlay(false)"
-            ></i>
+              src="../../assets/img/stop.png"
+            />
           </div>
           <el-progress
             v-if="isPlay"
@@ -47,7 +51,8 @@
             type="circle"
             :show-text="false"
             :percentage="curtime"
-            :width="componentData.width"
+            :width="componentData.width - 0"
+            color="#ff9813"
           ></el-progress>
         </div>
       </div>
@@ -109,7 +114,6 @@ export default {
     return {
       drawer: false, // 修改弹窗
       isPlay: false,
-      timer: null,
       curtime: 0,
     };
   },
@@ -123,22 +127,17 @@ export default {
         this.getCurTime();
       } else {
         this.$refs.audio.pause();
-        this.getCurTime(false);
       }
-
-      // console.log(this.$refs.audio);
     },
-    getCurTime(flage = true) {
-      if (this.timer) clearInterval(this.timer);
-      if (!flage) return;
-      this.timer = setInterval(() => {
+    getCurTime() {
+      this.$refs.audio.ontimeupdate = () => {
         this.curtime =
           (this.$refs.audio.currentTime / this.$refs.audio.duration) * 100;
         if (this.$refs.audio.currentTime == this.$refs.audio.duration) {
           this.curtime = 0;
           this.changePlay(false);
         }
-      }, 50);
+      };
     },
   },
 };
@@ -189,6 +188,12 @@ export default {
         vertical-align: middle;
         transform: translate(0, 0);
         .el-icon-video-pause {
+          width: 50%;
+          height: 50%;
+        }
+        img {
+          width: 100%;
+          height: 100%;
         }
       }
     }

@@ -8,7 +8,7 @@
       left: componentData.x + 'px',
       top: componentData.y + 'px',
     }"
-    @mousedown="down"
+    @mousedown.stop="down"
     @mouseup="up"
   >
     <div
@@ -120,11 +120,12 @@ export default {
 .BookPosition {
   position: absolute;
   user-select: none;
-
+  z-index: 4;
   &.redact {
     cursor: all-scroll;
     background-color: rgba(gray, 0.3);
   }
+
   .page_content {
     width: 100%;
     height: 100%;

@@ -26,7 +26,7 @@
         :class="{ redact: false }"
         :componentData="curComponent.componentData"
         :item="curComponent"
-        :redact="false"
+        :redact="true"
         :drawer="false"
         @handleClose="handleClose(`com${curComponent.id}`)"
         :ref="`com${curComponent.id}`"
@@ -78,9 +78,7 @@ export default {
           componentData: {
             value:
               "https://img.tukuppt.com/video_show/10/00/71/4/5f684cd46b673.mp4",
-            width: "auto",
-            height: "100px",
-            padding: "0px",
+            width: "60",
             margin: "0px",
           },
           children: [],
@@ -182,7 +180,7 @@ export default {
     position: fixed;
     top: 0px;
     left: 0px;
-    width: 400px;
+    // width: 400px;
     transform: translate(-50%, -50%);
     pointer-events: none;
     z-index: 88;

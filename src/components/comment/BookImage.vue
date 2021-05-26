@@ -33,7 +33,7 @@
       :append-to-body="true"
       size="60%"
     >
-      <div style="padding: 20px"  @click.stop>
+      <div style="padding: 20px" @click.stop>
         <el-form ref="form" label-width="80px">
           <el-form-item label="宽度">
             <el-input
@@ -47,7 +47,7 @@
               v-model="componentData.height"
               style="width: 280px"
             ></el-input
-            ><span style="font-size: 12px"> %/px</span>
+            ><span style="font-size: 12px">px</span>
           </el-form-item>
           <el-form-item label="外边距">
             <el-input
@@ -135,7 +135,7 @@ export default {
 
 <style lang="scss" scoped>
 .Book_image {
-  height: 200px;
+  min-width: 50px;
   position: relative;
   user-select: none;
   .page_content {
