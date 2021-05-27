@@ -36,12 +36,11 @@
             </div>
             <div
               class="page_box"
-              v-for="(item, i) in pageData.components"
+              v-for="(item) in pageData.components"
               :key="item.id"
             >
               <ComponentContainer
                 :children="[item]"
-                :minID="pageData.minID"
                 :zoom="curentZoom"
               />
             </div>

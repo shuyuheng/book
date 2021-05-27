@@ -18,7 +18,6 @@ Components.keys().map(key => {
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 console.log(process.env, '环境变量')
-window.eventBus = new Vue();//注册全局事件对象
 new Vue({
   router,
   store,

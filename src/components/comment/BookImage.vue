@@ -147,6 +147,7 @@ export default {
     background-position: center;
     background-size: cover;
     position: relative;
+    padding: 50px 25px;
   }
 }
 </style>

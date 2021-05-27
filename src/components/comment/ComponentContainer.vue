@@ -6,7 +6,7 @@
       :is="item.component"
       :key="item.id"
       :class="{ redact: redact }"
-      v-for="(item, i) in children"
+      v-for="item in children"
       :componentData="item.componentData"
       :item="item"
       :redact="redact"
@@ -18,17 +18,15 @@
       <utils
         slot="utils"
         v-if="redact"
-        :indexs="[...indexs, i]"
+        :id="item.id"
         :item="item"
         :isDragstart="isDragstart"
-        @deleteFn="delComponent([...indexs, i], item)"
         @updateFn="openUpdate(`com${item.id}`)"
       />
       <!-- 递归渲染子级 -->
       <ComponentContainer
         v-if="item.children && item.children.length"
         :children.sync="item.children"
-        :indexs="[...indexs, i]"
         :redact="redact"
       />
     </component>
@@ -45,18 +43,12 @@ export default {
       type: Array,
       required: true,
     },
-    indexs: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
     redact: {
       type: Boolean,
       default: false,
     },
     zoom: {
-      type: [Number,String],
+      type: [Number, String],
       default: 1,
     },
   },
@@ -70,30 +62,6 @@ export default {
   },
   created() {},
   methods: {
-    delComponent(indexs, item) {
-      this.$confirm(
-        `此操作将删除${item.componentTitleStr}，是否继续?`,
-        "删除提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "error",
-        }
-      )
-        .then(() => {
-          eventBus.$emit("delete", indexs, item);
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
-    },
     // 修改数据弹窗
     openUpdate(refKey) {
       this.$refs[refKey][0].drawer = true;

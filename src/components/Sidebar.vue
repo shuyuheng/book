@@ -14,28 +14,26 @@
     </div>
     <div
       class="component_content"
-      v-if="show"
+      v-if="pageDragState"
       :style="{
         left: movement.x + 'px',
         top: movement.y + 'px',
       }"
     >
       <component
-        :is="curComponent.component"
-        :key="curComponent.id"
+        :is="pageAddComponent.component"
+        :key="pageAddComponent.id"
         :class="{ redact: false }"
-        :componentData="curComponent.componentData"
-        :item="curComponent"
+        :componentData="pageAddComponent.componentData"
+        :item="pageAddComponent"
         :redact="true"
         :drawer="false"
-        @handleClose="handleClose(`com${curComponent.id}`)"
-        :ref="`com${curComponent.id}`"
+        @handleClose="handleClose(`com${pageAddComponent.id}`)"
+        :ref="`com${pageAddComponent.id}`"
         :isDrage="true"
       >
         <ComponentContainer
-          :children.sync="curComponent.children"
-          :minID="0"
-          :indexs="[]"
+          :children.sync="pageAddComponent.children"
           :redact="true"
         />
       </component>
@@ -44,6 +42,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -56,9 +55,9 @@ export default {
           componentData: {
             name: "舒榆衡",
             width: "auto",
-            height: "100px",
-            padding: "10px",
-            margin: "0px",
+            height: "",
+            padding: "",
+            margin: "",
             size: "cover",
             position: "center",
             value:
@@ -118,57 +117,49 @@ export default {
           children: [],
         },
       ],
-      curComponent: "",
-      show: false,
-      movement: {
-        x: 0,
-        y: 0,
-      },
     };
   },
-  created() {
-    this.init();
+  computed: {
+    ...mapState({
+      pageDragState: (state) => state.pageDataModule.pageDragState,
+      pageAddComponent: (state) => state.pageDataModule.pageAddComponent,
+      movement: (state) => state.pageDataModule.movement,
+    }),
   },
-  mounted() {},
+  created() {},
+  mounted() {
+    window.addEventListener("mousemove", this.move);
+    window.addEventListener("mouseup", this.dragend);
+  },
   methods: {
-    init() {
-      eventBus.$on("sidebarDragstart", (item) => {
-        this.dragstart(item);
-      });
-    },
+    // pagedata 模块方法
+    ...mapMutations("pageDataModule", [
+      "setPageDragState",
+      "setPageAddComponent",
+      "setMovement",
+    ]),
+    // 移动监听鼠标位置
     move(e) {
-      this.movement = {
+      let movement = {
         x: e.clientX,
         y: e.clientY,
         dataX: e.offsetX,
         dataY: e.offsetY,
       };
-      this.$nextTick(() => {
-        this.show = true;
-      });
+      this.setMovement(movement);
     },
+    // 开始拖拽
     dragstart(item) {
-      // console.log("拖拽开始");
-      eventBus.$emit("dragstart");
-      this.curComponent = item;
-      window.addEventListener("mousemove", this.move);
-      window.onmouseup = () => {
-        this.dragend(item);
-      };
+      this.setPageAddComponent(item);
     },
     // 拖拽结束 添加
-    dragend(item) {
-      let newItem = JSON.parse(JSON.stringify(item));
-      if (newItem.componentData.hasOwnProperty("x")) {
-        newItem.componentData.x = this.movement.dataX;
-        newItem.componentData.y = this.movement.dataY;
-      }
-      eventBus.$emit("dragend", newItem);
-      this.curComponent = "";
-      this.show = false;
-      window.removeEventListener("mousemove", this.move);
-      window.onmouseup = null;
+    dragend() {
+      this.setPageAddComponent("");
     },
+  },
+  destroyed() {
+    window.removeEventListener("mousemove", this.move);
+    window.removeEventListener("mouseup", this.dragend);
   },
 };
 </script>
@@ -183,7 +174,7 @@ export default {
     position: relative;
     user-select: none;
     color: white;
-    &:hover{
+    &:hover {
       color: orange;
     }
     .container {

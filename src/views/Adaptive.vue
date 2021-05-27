@@ -22,21 +22,17 @@
             </div>
             <div
               class="page_box"
-              v-for="(item, i) in pageData.components"
+              v-for="item in pageData.components"
               :key="item.id"
             >
-              <ComponentContainer
-                :children="[item]"
-                :minID="pageData.minID"
-                :zoom="curentZoom"
-              />
+              <ComponentContainer :children="[item]" :zoom="curentZoom" />
             </div>
             <div class="harda" v-if="pageData.components.length < 3">END</div>
           </div>
         </div>
       </div>
     </div>
-    <div class="centerLR" style="width: 60%; margin: 0 auto">
+    <div class="centerLR" style="width: 60%; margin: 20px auto 0">
       <el-button type="text" @click="previous" :disabled="curPage <= 1"
         >上一页</el-button
       >
@@ -110,7 +106,9 @@ export default {
       // 获取页面数量
       this.pages = $("#book").turn("pages");
       this.curPage = $("#book").turn("page");
-      this.resizeChangeZoom();
+      this.$nextTick(() => {
+        this.resizeChangeZoom();
+      });
     },
     // 缩放
     zoomFn(val) {
@@ -131,17 +129,12 @@ export default {
     // 视口改变书籍大小
     resizeChangeZoom() {
       let domWidth =
-        this.$refs.Adaptive.clientWidth -
-        this.$refs.Adaptive.clientWidth * 0.15;
+        document.documentElement.offsetWidth -
+        document.documentElement.offsetWidth * 0.15;
       let domHeight =
         this.$refs.Adaptive.clientHeight -
         this.$refs.Adaptive.clientWidth * 0.15;
-      let totalSize = domWidth + domHeight;
-      console.log(domWidth, domHeight, this.$refs.Adaptive);
-      //   let widthRatio = this.ratio(domWidth, totalSize);
-      //   let heightRatio = this.ratio(domHeight, totalSize);
       this.curentZoom = Math.min(domWidth / 800, domHeight / 1100);
-      console.log(this.curentZoom);
       this.setZoom();
     },
   },
@@ -164,8 +157,9 @@ export default {
   z-index: 99;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   padding: 20px 0;
+  overflow: hidden;
   .book_out_box {
     position: relative;
     left: 0;
