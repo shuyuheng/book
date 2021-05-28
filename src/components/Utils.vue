@@ -6,40 +6,55 @@
     @mouseleave.stop="isSelect = false"
     @click="clickFn"
     @mouseup="isAddPageAddComponent(id)"
-    ref="util"
+    ref="utils"
   >
-    <div class="centerR page_content" v-if="isShow">
-      <el-button
-        type="text"
-        @click.stop="$emit('updateFn')"
-        v-if="item.component != 'Page'"
-        >编辑</el-button
-      >
-      <el-button type="text" @click.stop="delComponent">删除</el-button>
-      <div
-        v-if="item.component != 'Page'"
-        class="el-button--text"
-        type="text"
-        style="cursor: all-scroll; margin-left: 6px"
-        @mousedown.stop="dragstart"
-      >
-        拖动
-      </div>
-    </div>
-    <!-- 缩放按钮 -->
-    <div
-      class="zoom_btns"
-      v-if="isShow"
-      @mousedown="zoomStart"
-      @mouseup="zoomEnd"
+    <VueDragResize
+      v-if="isShow && item.component != 'Page'"
+      :isActive="true"
+      :isDraggable="item.componentData.hasOwnProperty('x')"
+      :aspectRatio="item.componentData.aspectRatio"
+      :w="item.componentData.width"
+      :h="item.componentData.height"
+      :x="item.componentData.x"
+      :y="item.componentData.y"
+      :parentLimitation="true"
+      :parentW="maxWidth"
+      :parentH="maxHeight"
+      v-on:resizing="resize"
+      v-on:dragging="resize"
     >
-      <i v-for="i in 8" :key="i" />
-    </div>
+      <div class="centerR page_content" v-if="isShow">
+        <el-button
+          type="text"
+          @click.stop="redactComponent"
+          v-if="item.component != 'Page'"
+          >编辑</el-button
+        >
+        <el-button type="text" @click.stop="delComponent">删除</el-button>
+        <div
+          v-if="item.component != 'Page'"
+          class="el-button--text"
+          type="text"
+          style="cursor: all-scroll; margin-left: 6px"
+          @mousedown.stop="dragstart"
+        >
+          拖动
+        </div>
+      </div>
+      <div class="size_info">
+        <span>{{ item.componentData.x }}*{{ item.componentData.y }}</span>
+        <span style="padding: 0 3px">/</span>
+        <span
+          >{{ item.componentData.width }}*{{ item.componentData.height }}</span
+        >
+      </div>
+    </VueDragResize>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import VueDragResize from "vue-drag-resize";
 export default {
   props: {
     id: {
@@ -50,6 +65,9 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  components: {
+    VueDragResize,
   },
   computed: {
     ...mapState({
@@ -62,12 +80,20 @@ export default {
     return {
       isSelect: false, //是否向该组件内部插入组件
       isShow: false,
+      // 父级组件
+      parentEle: "",
+      maxWidth: 0,
+      maxHeight: 0,
     };
   },
   created() {
     document.documentElement.addEventListener("click", (e) => {
-      if (e.target != this.$refs.util) this.isShow = false;
+      if (e.target != this.$refs.utils) this.isShow = false;
     });
+  },
+  mounted() {
+    // 获取外层元素宽高
+    this.getMaxSize();
   },
   methods: {
     ...mapMutations("pageDataModule", [
@@ -75,6 +101,7 @@ export default {
       "pageDataRemove",
       "isAddPageAddComponent",
       "setPageAddComponent",
+      "setPageUpdateComponent",
     ]),
     clickFn() {
       this.isShow = true;
@@ -110,16 +137,53 @@ export default {
           });
         });
     },
-    // 设置拉伸大小
-    zoomStart(e) {
-      window.addEventListener("mousemove", this.moveResize);
+    // 获取最大宽高
+    getMaxSize() {
+      const parentEle = this.$refs.utils.parentElement.parentElement
+        .parentElement;
+      this.parentEle = parentEle;
+      let maxWidth = this.parentEle.offsetWidth;
+      let maxHeight = this.parentEle.offsetHeight;
+      // 如果有外边框
+      if (this.item.componentData.hasOwnProperty("margin")) {
+        maxWidth =
+          maxWidth -
+          this.item.componentData.margin[1] -
+          this.item.componentData.margin[3];
+        maxHeight =
+          maxHeight -
+          this.item.componentData.margin[0] -
+          this.item.componentData.margin[2];
+      }
+      // 获取padding样式
+      let paddingData = getComputedStyle(this.parentEle);
+      let paddingStr = [
+        paddingData.paddingTop,
+        paddingData.paddingRight,
+        paddingData.paddingBottom,
+        paddingData.paddingLeft,
+      ];
+      let paddings = paddingStr.map((str) => parseInt(str));
+      maxWidth = maxWidth - paddings[1] - paddings[3];
+      maxHeight = maxHeight - paddings[0] - paddings[2];
+      // 重新赋值最大宽高
+      this.maxWidth = maxWidth;
+      this.maxHeight = maxHeight;
+      // 判断是否超过最大值
     },
-    zoomEnd() {
-      console.log('抬起');
-      window.removeEventListener("mousemove", this.moveResize);
+    // 设置大小位置
+    resize(newRect) {
+      this.item.componentData.width = newRect.width;
+      this.item.componentData.height = newRect.height;
+      if (this.item.componentData.hasOwnProperty("x")) {
+        this.item.componentData.x = newRect.left;
+        this.item.componentData.y = newRect.top;
+      }
+      this.getMaxSize();
     },
-    moveResize(e) {
-      console.log(e);
+    // 编辑组件
+    redactComponent() {
+      this.setPageUpdateComponent(this.item);
     },
   },
 };
@@ -139,70 +203,30 @@ export default {
     box-shadow: 0 0 0 5px #ffd539 inset;
     cursor: pointer;
   }
+  .vdr,
+  .vdr.active:before {
+    left: 0 !important;
+    top: 0 !important;
+  }
   .page_content {
     position: absolute;
     right: 4px;
     top: 4px;
+  }
+  .size_info {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: white;
+    padding: 6px;
+    background-color: rgba(black, 0.5);
   }
   .el-button--text {
     color: red;
     letter-spacing: 3px;
     padding-top: 0;
     padding-bottom: 0;
-  }
-  .zoom_btns {
-    $size: 5px;
-    i {
-      display: block;
-      position: absolute;
-      width: $size;
-      height: $size;
-      background-color: red;
-      &:nth-of-type(1) {
-        top: 0px;
-        left: 0px;
-        cursor: nw-resize;
-      }
-      &:nth-of-type(2) {
-        top: 0px;
-        left: 50%;
-        transform: translateX(-50%);
-        cursor: n-resize;
-      }
-      &:nth-of-type(3) {
-        top: 0px;
-        right: 0px;
-        cursor: ne-resize;
-      }
-      &:nth-of-type(4) {
-        top: 50%;
-        right: 0px;
-        transform: translateY(-50%);
-        cursor: e-resize;
-      }
-      &:nth-of-type(5) {
-        bottom: 0px;
-        right: 0px;
-        cursor: se-resize;
-      }
-      &:nth-of-type(6) {
-        bottom: 0px;
-        left: 50%;
-        transform: translateX(-50%);
-        cursor: s-resize;
-      }
-      &:nth-of-type(7) {
-        left: 0px;
-        bottom: 0px;
-        cursor: sw-resize;
-      }
-      &:nth-of-type(8) {
-        left: 0px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: w-resize;
-      }
-    }
   }
 }
 </style>

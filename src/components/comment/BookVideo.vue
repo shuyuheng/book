@@ -61,40 +61,6 @@
       <slot />
     </div>
     <slot name="utils" />
-    <!-- 修改 -->
-    <el-drawer
-      title="组件数据"
-      :visible.sync="drawer"
-      direction="btt"
-      :before-close="
-        () => {
-          $emit('handleClose');
-        }
-      "
-      :append-to-body="true"
-      size="60%"
-    >
-      <div style="padding: 20px" @click.stop>
-        <el-form ref="form" label-width="80px">
-          <el-form-item label="宽度">
-            <el-input
-              v-model="componentData.width"
-              style="width: 280px"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="外边距">
-            <el-input
-              v-model="componentData.margin"
-              style="width: 280px"
-            ></el-input
-            ><span style="font-size: 12px"> %/px</span>
-          </el-form-item>
-          <el-form-item label="视频地址">
-            <el-input v-model="componentData.value"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-drawer>
     <!-- 视频播放弹窗 -->
     <el-dialog
       title="视频播放"
@@ -134,7 +100,6 @@ export default {
   },
   data() {
     return {
-      drawer: false, // 修改弹窗
       isPlay: false,
       curtime: 0,
     };

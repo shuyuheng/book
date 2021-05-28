@@ -21,7 +21,6 @@
         :id="item.id"
         :item="item"
         :isDragstart="isDragstart"
-        @updateFn="openUpdate(`com${item.id}`)"
       />
       <!-- 递归渲染子级 -->
       <ComponentContainer
@@ -61,15 +60,7 @@ export default {
     };
   },
   created() {},
-  methods: {
-    // 修改数据弹窗
-    openUpdate(refKey) {
-      this.$refs[refKey][0].drawer = true;
-    },
-    handleClose(refKey) {
-      this.$refs[refKey][0].drawer = false;
-    },
-  },
+  methods: {},
 };
 </script>
 

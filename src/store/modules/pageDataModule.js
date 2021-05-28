@@ -16,7 +16,7 @@ const treeForEach = (children, id) => {
         }
     }
 }
-// 
+// module
 const pageDataModule = {
     namespaced: true, // 开启命名空间 防止重复命名导致崩溃
     state: {
@@ -43,6 +43,8 @@ const pageDataModule = {
             dataX: 0,
             dataY: 0
         },
+        // 即将修改的组件
+        pageUpdateComponent: ""
     },
     mutations: {
         // 设置即将添加的组件的位置
@@ -93,6 +95,18 @@ const pageDataModule = {
             // 重新赋值
             state.pageData = pageData
         },
+        // 修改组件
+        pageDataUpdate(state, component) {
+            console.log('修改组件', component);
+            // 深度克隆防止污染
+            let pageData = JSON.parse(JSON.stringify(state.pageData))
+            treeForEach(pageData.components, component.id)
+            let { children, index } = treeData
+            children[index] = component
+            // 重新赋值
+            state.pageData = pageData
+            console.log('修改完成', pageData);
+        },
         // 是否将即将添加的组件放入页面中
         isAddPageAddComponent(state, parentId) {
             if (!state.pageDragState) {
@@ -100,6 +114,11 @@ const pageDataModule = {
             }
             this.commit('pageDataModule/pageDataAdd', { parentId, component: state.pageAddComponent })
             this.commit('pageDataModule/setPageAddComponent', "")
+        },
+        // 设置即将修改的组件
+        setPageUpdateComponent(state, component) {
+            console.log('编辑组件', component);
+            state.pageUpdateComponent = component
         }
     },
     actions: {

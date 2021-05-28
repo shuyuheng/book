@@ -24,15 +24,19 @@
         :redact="true"
       />
     </div>
+    <!-- 修改弹窗 -->
+    <UpdateComData />
   </div>
 </template>
 
 <script>
 import Sidebar from "@/components/Sidebar";
+import UpdateComData from "@/components/UpdateComData";
 import { mapState, mapMutations } from "vuex";
 export default {
   components: {
     Sidebar,
+    UpdateComData,
   },
   computed: {
     ...mapState({

@@ -1,19 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Redact from '../views/Redact.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    redirect: '/Adaptive'
+    redirect: '/Exhibition'
   },
   {
     path: '/redact',
-    name: 'Home',
-    component: Home,
+    name: 'Redact',
+    component: Redact,
   },
   {
     path: '/Exhibition',
@@ -24,6 +23,11 @@ const routes = [
     path: '/Adaptive',
     name: 'Adaptive',
     component: () => import('../views/Adaptive.vue')
+  },
+  {
+    path: '*',
+    name: '404',
+    component: () => import('../views/404.vue')
   },
 ]
 
