@@ -82,8 +82,8 @@ export default {
       isShow: false,
       // 父级组件
       parentEle: "",
-      maxWidth: 0,
-      maxHeight: 0,
+      maxWidth: 800,
+      maxHeight: 1100,
     };
   },
   created() {
@@ -105,6 +105,8 @@ export default {
     ]),
     clickFn() {
       this.isShow = true;
+      // 编辑之前计算一下最大宽高
+      this.getMaxSize();
     },
     dragstart() {
       // 重新拖拽
@@ -154,9 +156,16 @@ export default {
       ) {
         const Ele = this.$refs.utils.parentElement.parentElement.children[i];
         if (Ele == this.$refs.utils.parentElement) continue;
+        if (
+          getComputedStyle(this.$refs.utils.parentElement).position ==
+          "absolute"
+        )
+          break;
+        let EleStyle = getComputedStyle(Ele);
+        if (EleStyle.position == "absolute") continue;
         totalHeight += Ele.offsetHeight;
-        totalHeight += parseInt(getComputedStyle(Ele).marginTop);
-        totalHeight += parseInt(getComputedStyle(Ele).marginBottom);
+        totalHeight += parseInt(EleStyle.marginTop);
+        totalHeight += parseInt(EleStyle.marginBottom);
       }
       maxHeight = maxHeight - totalHeight;
       // 如果有外边框
@@ -184,6 +193,14 @@ export default {
       // 重新赋值最大宽高
       this.maxWidth = maxWidth;
       this.maxHeight = maxHeight;
+      // console.log("最大宽高 =>", this.maxWidth, this.maxHeight);
+      // 判断如果是否超过最大宽高
+      if (this.item.componentData.width > maxWidth) {
+        this.item.componentData.width = maxWidth;
+      }
+      if (this.item.componentData.width > maxWidth) {
+        this.item.componentData.height = maxHeight;
+      }
     },
     // 设置大小位置
     resize(newRect) {
@@ -193,7 +210,6 @@ export default {
         this.item.componentData.x = newRect.left;
         this.item.componentData.y = newRect.top;
       }
-      this.getMaxSize();
     },
     // 编辑组件
     redactComponent() {
