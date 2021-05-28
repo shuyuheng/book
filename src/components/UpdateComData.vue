@@ -99,6 +99,40 @@
               </el-col>
             </el-row>
           </el-form-item>
+          <el-form-item
+            label="横向布局"
+            v-if="updateKeys.includes('justifyContent')"
+          >
+            <el-select
+              v-model="updateData.componentData.justifyContent"
+              placeholder="请选择"
+            >
+              <el-option label="居左" value="flex-start" />
+              <el-option label="居中" value="center" />
+              <el-option label="居右" value="flex-end" />
+              <el-option label="两端对齐均分" value="space-between" />
+              <el-option label="均分" value="space-around" />
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            label="纵向布局"
+            v-if="updateKeys.includes('justifyContent')"
+          >
+            <el-select
+              v-model="updateData.componentData.alignItems"
+              placeholder="请选择"
+            >
+              <el-option label="居左" value="flex-start" />
+              <el-option label="居中" value="center" />
+              <el-option label="居右" value="flex-end" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="背景色" v-if="updateKeys.includes('bgColor')">
+            <el-color-picker
+              v-model="updateData.componentData.bgColor"
+              show-alpha
+            ></el-color-picker>
+          </el-form-item>
           <!-- 操作按钮 -->
           <el-form-item class="centerR">
             <el-button type="primary" @click="submitForm('ruleForm')"

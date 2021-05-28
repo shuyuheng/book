@@ -1,22 +1,22 @@
 <template>
   <div
-    class="Book_image component"
-    title="图片组件"
+    class="BookFlex component"
     :style="{
       width: componentData.width + 'px',
       height: componentData.height + 'px',
       margin: componentData.margin.map((num) => num + 'px').join(' '),
     }"
   >
+    <!-- 页面主要内容取悦 -->
     <div
       class="page_content"
       :style="{
-        backgroundImage: `url('${componentData.value}')`,
         padding: componentData.padding.map((num) => num + 'px').join(' '),
       }"
     >
       <slot />
     </div>
+    <!-- 工具箱 -->
     <slot name="utils" />
   </div>
 </template>
@@ -35,27 +35,18 @@ export default {
     },
     /* props default end */
   },
-  data() {
-    return {};
-  },
-  created() {},
-  methods: {
-    /* methods default end */
-  },
 };
 </script>
 
 <style lang="scss" scoped>
-.Book_image {
+.BookFlex {
+  &.redact {
+    background-color: rgba(gray, 0.5);
+  }
   .page_content {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-position: center;
-    background-size: cover;
-    position: relative;
   }
 }
 </style>

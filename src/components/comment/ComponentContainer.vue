@@ -9,10 +9,8 @@
       v-for="item in children"
       :componentData="item.componentData"
       :item="item"
-      :redact="redact"
       :drawer.sync="drawer"
       @handleClose="handleClose(`com${item.id}`)"
-      :ref="`com${item.id}`"
       :zoom="zoom"
     >
       <utils

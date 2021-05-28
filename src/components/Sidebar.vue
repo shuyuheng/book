@@ -23,7 +23,7 @@
       <component
         :is="pageAddComponent.component"
         :key="pageAddComponent.id"
-        :class="{ redact: false }"
+        :class="{ redact: true }"
         :componentData="pageAddComponent.componentData"
         :item="pageAddComponent"
         :redact="true"
@@ -115,6 +115,35 @@ export default {
             y: 0,
             width: 200,
             height: 200,
+          },
+          children: [],
+        },
+        {
+          id: 0,
+          parentId: 0,
+          componentTitleStr: "Flex布局组件",
+          component: "BookFlex",
+          componentData: {
+            width: 200,
+            height: 200,
+            padding: [0, 0, 0, 0],
+            margin: [0, 0, 0, 0],
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+          },
+          children: [],
+        },
+        {
+          id: 0,
+          parentId: 0,
+          componentTitleStr: "占位空白符",
+          component: "BookBlack",
+          componentData: {
+            width: 200,
+            height: 40,
+            padding: [0, 0, 0, 0],
+            margin: [0, 0, 0, 0],
+            bgColor: "rgba(180, 180, 180, 0.8)",
           },
           children: [],
         },
