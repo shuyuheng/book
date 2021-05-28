@@ -144,6 +144,21 @@ export default {
       this.parentEle = parentEle;
       let maxWidth = this.parentEle.offsetWidth;
       let maxHeight = this.parentEle.offsetHeight;
+
+      // 计算所有兄弟元素的高
+      let totalHeight = 0;
+      for (
+        let i = 0;
+        i < this.$refs.utils.parentElement.parentElement.children.length;
+        i++
+      ) {
+        const Ele = this.$refs.utils.parentElement.parentElement.children[i];
+        if (Ele == this.$refs.utils.parentElement) continue;
+        totalHeight += Ele.offsetHeight;
+        totalHeight += parseInt(getComputedStyle(Ele).marginTop);
+        totalHeight += parseInt(getComputedStyle(Ele).marginBottom);
+      }
+      maxHeight = maxHeight - totalHeight;
       // 如果有外边框
       if (this.item.componentData.hasOwnProperty("margin")) {
         maxWidth =
@@ -169,7 +184,6 @@ export default {
       // 重新赋值最大宽高
       this.maxWidth = maxWidth;
       this.maxHeight = maxHeight;
-      // 判断是否超过最大值
     },
     // 设置大小位置
     resize(newRect) {

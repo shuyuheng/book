@@ -122,9 +122,9 @@
               v-model="updateData.componentData.alignItems"
               placeholder="请选择"
             >
-              <el-option label="居左" value="flex-start" />
+              <el-option label="居上" value="flex-start" />
               <el-option label="居中" value="center" />
-              <el-option label="居右" value="flex-end" />
+              <el-option label="居下" value="flex-end" />
             </el-select>
           </el-form-item>
           <el-form-item label="背景色" v-if="updateKeys.includes('bgColor')">

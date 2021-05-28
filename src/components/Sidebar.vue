@@ -143,7 +143,7 @@ export default {
             height: 40,
             padding: [0, 0, 0, 0],
             margin: [0, 0, 0, 0],
-            bgColor: "rgba(180, 180, 180, 0.8)",
+            bgColor: "rgba(180, 220, 180, 0.8)",
           },
           children: [],
         },
