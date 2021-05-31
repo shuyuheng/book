@@ -36,13 +36,10 @@
             </div>
             <div
               class="page_box"
-              v-for="(item) in pageData.components"
+              v-for="item in pageData.components"
               :key="item.id"
             >
-              <ComponentContainer
-                :children="[item]"
-                :zoom="curentZoom"
-              />
+              <ComponentContainer :children="[item]" :zoom="curentZoom" />
             </div>
             <div class="harda" v-if="pageData.components.length < 3">END</div>
           </div>
@@ -102,6 +99,7 @@
 <script>
 import "@/assets/js/extras/jquery.min.1.7";
 import "@/assets/js/lib/turn";
+import data from "../utils/mockPageData";
 // import "turn.js";
 export default {
   data() {
@@ -122,6 +120,9 @@ export default {
   created() {
     let pageData = localStorage.getItem("pageData");
     if (pageData) this.pageData = JSON.parse(pageData);
+    else {
+      this.pageData = data;
+    }
   },
   methods: {
     // 百分比缩放

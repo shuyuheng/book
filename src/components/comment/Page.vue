@@ -1,6 +1,6 @@
 <template>
   <div
-    class="Page"
+    class="Page component"
     :style="{
       transform: `scale(${zoom})`,
     }"

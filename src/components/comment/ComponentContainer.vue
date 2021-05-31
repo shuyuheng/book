@@ -26,6 +26,8 @@
         :children.sync="item.children"
         :redact="redact"
       />
+      <!-- 计算剩余高度的元素 必须在组件之后 -->
+      <div class="computed-height" />
     </component>
   </div>
 </template>

@@ -72,9 +72,12 @@ export default {
     display: flex;
     flex-direction: column;
     & > div {
-      flex: 1;
       display: flex;
       flex-wrap: wrap;
+    }
+    &:first
+    .computed-height{
+      // display: none;
     }
   }
 }

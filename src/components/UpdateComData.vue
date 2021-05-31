@@ -138,7 +138,7 @@
             <el-button type="primary" @click="submitForm('ruleForm')"
               >保存</el-button
             >
-            <el-button @click="resetForm('ruleForm')">重置</el-button>
+            <el-button @click="resetForm('ruleForm')">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -213,7 +213,9 @@ export default {
       this.handleClose();
     },
     // 重置表单
-    resetForm(formName) {},
+    resetForm(formName) {
+      this.handleClose();
+    },
   },
 };
 </script>

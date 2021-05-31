@@ -146,50 +146,13 @@ export default {
       this.parentEle = parentEle;
       let maxWidth = this.parentEle.offsetWidth;
       let maxHeight = this.parentEle.offsetHeight;
-
-      // 计算所有兄弟元素的高
-      let totalHeight = 0;
-      for (
-        let i = 0;
-        i < this.$refs.utils.parentElement.parentElement.children.length;
-        i++
-      ) {
-        const Ele = this.$refs.utils.parentElement.parentElement.children[i];
-        if (Ele == this.$refs.utils.parentElement) continue;
-        if (
-          getComputedStyle(this.$refs.utils.parentElement).position ==
-          "absolute"
-        )
-          break;
-        let EleStyle = getComputedStyle(Ele);
-        if (EleStyle.position == "absolute") continue;
-        totalHeight += Ele.offsetHeight;
-        totalHeight += parseInt(EleStyle.marginTop);
-        totalHeight += parseInt(EleStyle.marginBottom);
+      // 不计算剩余宽高 父组件宽高为最大宽高
+      if (this.item.componentData.noComputedSize) {
+      } else {
+        let childrenEle = this.parentEle.querySelectorAll(".computed-height");
+        childrenEle = childrenEle[childrenEle.length - 1];
+        maxHeight = childrenEle.offsetHeight + this.item.componentData.height;
       }
-      maxHeight = maxHeight - totalHeight;
-      // 如果有外边框
-      if (this.item.componentData.hasOwnProperty("margin")) {
-        maxWidth =
-          maxWidth -
-          this.item.componentData.margin[1] -
-          this.item.componentData.margin[3];
-        maxHeight =
-          maxHeight -
-          this.item.componentData.margin[0] -
-          this.item.componentData.margin[2];
-      }
-      // 获取padding样式
-      let paddingData = getComputedStyle(this.parentEle);
-      let paddingStr = [
-        paddingData.paddingTop,
-        paddingData.paddingRight,
-        paddingData.paddingBottom,
-        paddingData.paddingLeft,
-      ];
-      let paddings = paddingStr.map((str) => parseInt(str));
-      maxWidth = maxWidth - paddings[1] - paddings[3];
-      maxHeight = maxHeight - paddings[0] - paddings[2];
       // 重新赋值最大宽高
       this.maxWidth = maxWidth;
       this.maxHeight = maxHeight;

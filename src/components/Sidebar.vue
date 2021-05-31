@@ -115,6 +115,8 @@ export default {
             y: 0,
             width: 200,
             height: 200,
+            // 是否计算最大宽高
+            noComputedSize:true,
           },
           children: [],
         },

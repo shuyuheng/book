@@ -63,4 +63,11 @@ $--font-path: "~element-ui/lib/theme-chalk/fonts";
   z-index: 3;
   user-select: none;
   position: relative;
+  & > .page_content {
+    display: flex;
+    flex-direction: column;
+    & > .computed-height {
+      flex: 1;
+    }
+  }
 }
