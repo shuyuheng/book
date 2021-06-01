@@ -26,17 +26,21 @@
     </div>
     <!-- 修改弹窗 -->
     <UpdateComData />
+    <!-- tree数据 -->
+    <DataTree />
   </div>
 </template>
 
 <script>
 import Sidebar from "@/components/Sidebar";
 import UpdateComData from "@/components/UpdateComData";
+import DataTree from "@/components/DataTree";
 import { mapState, mapMutations } from "vuex";
 export default {
   components: {
     Sidebar,
     UpdateComData,
+    DataTree,
   },
   computed: {
     ...mapState({
@@ -55,6 +59,7 @@ export default {
         component: {
           id: 0,
           component: "Page",
+          componentTitleStr: "页面",
           componentData: {},
           children: [],
         },

@@ -1,7 +1,10 @@
 <template>
   <div
     class="utils"
-    :class="{ selectBorder: isSelect && pageDragState == true, redact: isShow }"
+    :class="{
+      selectBorder: isSelect && pageDragState == true,
+      redact: isShow || isInclude,
+    }"
     @mouseenter.stop="pageDragState ? (isSelect = true) : ''"
     @mouseleave.stop="isSelect = false"
     @click="clickFn"
@@ -9,7 +12,7 @@
     ref="utils"
   >
     <VueDragResize
-      v-if="isShow && item.component != 'Page'"
+      v-if="(isShow || isInclude) && item.component != 'Page'"
       :isActive="true"
       :isDraggable="item.componentData.hasOwnProperty('x')"
       :aspectRatio="item.componentData.aspectRatio"
@@ -23,7 +26,7 @@
       v-on:resizing="resize"
       v-on:dragging="resize"
     >
-      <div class="centerR page_content" v-if="isShow">
+      <div class="centerR page_content" v-if="isShow || isInclude">
         <el-button
           type="text"
           @click.stop="redactComponent"
@@ -74,7 +77,14 @@ export default {
       pageDragState: (state) => state.pageDataModule.pageDragState,
       pageAddComponent: (state) => state.pageDataModule.pageAddComponent,
       pageAddComponent: (state) => state.pageDataModule.pageAddComponent,
+      selectComponents: (state) => state.pageDataModule.selectComponents,
     }),
+    isInclude() {
+      let index = this.selectComponents.findIndex(
+        (item) => item.id == this.item.id
+      );
+      return index != -1;
+    },
   },
   data() {
     return {
@@ -152,6 +162,7 @@ export default {
         let childrenEle = this.parentEle.querySelectorAll(".computed-height");
         childrenEle = childrenEle[childrenEle.length - 1];
         maxHeight = childrenEle.offsetHeight + this.item.componentData.height;
+        maxWidth = childrenEle.offsetWidth;
       }
       // 重新赋值最大宽高
       this.maxWidth = maxWidth;

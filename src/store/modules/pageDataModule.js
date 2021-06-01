@@ -1,3 +1,4 @@
+
 let treeData = ""
 // 递归遍历组件 by ID
 const treeForEach = (children, id) => {
@@ -27,11 +28,14 @@ const pageDataModule = {
                 {
                     id: 1,
                     component: "Page",
+                    componentTitleStr: "页面",
                     componentData: {},
                     children: [],
                 },
             ],
         },
+        // 选中的组件
+        selectComponents: [],
         // 拖动状态
         pageDragState: false,
         // 即将添加的组件
@@ -66,9 +70,24 @@ const pageDataModule = {
             // 深度克隆防止污染
             let pageData = JSON.parse(JSON.stringify(state.pageData))
             component = JSON.parse(JSON.stringify(component))
-            component.id = pageData.minID;
-            // 添加id+1
-            pageData.minID++;
+
+            const setIds = (component) => {
+                component.id = pageData.minID;
+                // 添加id+1
+                pageData.minID++;
+                if (component.children && component.children.length) {
+                    for (let i = 0; i < component.children.length; i++) {
+                        const item = component.children[i];
+                        setIds(item)
+                    }
+                }
+            }
+            setIds(component)
+
+
+
+
+
             // 如果组件需要拖拽的位置
             if (component.componentData.hasOwnProperty("x")) {
                 component.componentData.x = state.movement.dataX;
@@ -119,7 +138,31 @@ const pageDataModule = {
         setPageUpdateComponent(state, component) {
             console.log('编辑组件', component);
             state.pageUpdateComponent = component
-        }
+        },
+        // 设置组件数据位置 上移动/下移
+        setDataIndex(state, { id, type }) {
+            let pageData = JSON.parse(JSON.stringify(state.pageData))
+            // type true上 false下
+            treeForEach(pageData.components, id)
+            let { children, index } = treeData
+            if (index == 0 && type == true) {
+                return alert('已经是第一位了')
+            } else if (index == children.length - 1 && type == false) {
+                return alert('已经是最后一位了')
+            }
+            // 
+            console.log(treeData);
+            let myItem = children[index]
+            if (type) {
+                children[index] = children[index - 1]
+                children[index - 1] = myItem
+            } else {
+                children[index] = children[index + 1]
+                children[index + 1] = myItem
+            }
+            // 重新赋值
+            state.pageData = pageData
+        },
     },
     actions: {
 
