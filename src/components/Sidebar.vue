@@ -52,11 +52,12 @@ export default {
           parentId: 0,
           componentTitleStr: "图片组件",
           component: "BookImage",
+          lock: false,
           componentData: {
             width: 200,
             height: 200,
-            padding: [0, 0, 0, 0],
-            margin: [0, 0, 0, 0],
+            x: 0,
+            y: 0,
             value:
               "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
           },
@@ -67,12 +68,13 @@ export default {
           parentId: 0,
           componentTitleStr: "富文本组件",
           component: "BookContent",
+          lock: false,
           componentData: {
             html: "富文本内容组件，可以解析html标签",
-            width: 200,
-            height: 200,
-            padding: [0, 0, 0, 0],
-            margin: [0, 0, 0, 0],
+            width: 150,
+            height: 150,
+            x: 0,
+            y: 0,
           },
           children: [],
         },
@@ -81,12 +83,14 @@ export default {
           parentId: 0,
           componentTitleStr: "视频组件",
           component: "BookVideo",
+          lock: false,
           componentData: {
             value:
               "https://img.tukuppt.com/video_show/10/00/71/4/5f684cd46b673.mp4",
             width: 60,
-            height: 60,
             aspectRatio: true,
+            x: 0,
+            y: 0,
           },
           children: [],
         },
@@ -95,57 +99,14 @@ export default {
           parentId: 0,
           componentTitleStr: "音频组件",
           component: "BookAudio",
+          lock: false,
           componentData: {
             value:
               "https://img.tukuppt.com/newpreview_music/08/99/04/5c88da803211726129.mp3",
             width: 60,
-            height: 60,
             aspectRatio: true,
-          },
-          children: [],
-        },
-        {
-          id: 0,
-          parentId: 0,
-          componentTitleStr: "定位组件",
-          component: "BookPosition",
-          componentData: {
-            padding: [0, 0, 0, 0],
             x: 0,
             y: 0,
-            width: 200,
-            height: 200,
-            // 是否计算最大宽高
-            noComputedSize:true,
-          },
-          children: [],
-        },
-        {
-          id: 0,
-          parentId: 0,
-          componentTitleStr: "Flex布局组件",
-          component: "BookFlex",
-          componentData: {
-            width: 200,
-            height: 200,
-            padding: [0, 0, 0, 0],
-            margin: [0, 0, 0, 0],
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
-          },
-          children: [],
-        },
-        {
-          id: 0,
-          parentId: 0,
-          componentTitleStr: "占位空白符",
-          component: "BookBlack",
-          componentData: {
-            width: 200,
-            height: 40,
-            padding: [0, 0, 0, 0],
-            margin: [0, 0, 0, 0],
-            bgColor: "rgba(180, 220, 180, 0.8)",
           },
           children: [],
         },
@@ -224,7 +185,7 @@ export default {
     top: 0px;
     left: 0px;
     // width: 400px;
-    transform: translate(-50%, -50%);
+    // transform: translate(-50%, -50%);
     pointer-events: none;
     z-index: 88;
     &::after {

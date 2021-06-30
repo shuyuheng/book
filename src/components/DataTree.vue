@@ -6,46 +6,75 @@
     :x="dragData.x"
     :y="dragData.y"
     :z="10"
-    :parentW="dragData.maxWidth"
-    :parentH="dragData.maxHeight"
-    :parentLimitation="true"
     @clicked="onActivated"
     v-on:resizing="resize"
     v-on:dragging="resize"
   >
     <div class="content">
-      <el-tree
-        :data="pageData.components"
-        :props="defaultProps"
-        default-expand-all
-      >
-        <template slot-scope="{ node, data }">
-          <div class="centerLR" style="width: 100%" @click.stop>
-            <div class="center">
-              <el-checkbox
-                :value="filterVal(data.id)"
-                @change="checkChange(data)"
-                v-if="data.component != 'Page'"
-              />
-              <span class="tree_title">{{ node.label }}</span>
-            </div>
-            <div class="btns">
-              <div @click="moveIndex(data, true)">上移</div>
-              <div @click="moveIndex(data, false)">下移</div>
-              <div style="color: red" @click="delComponent(data)">删除</div>
-              <div
-                style="color: green"
-                @click="data.component == 'Page' ? copyPage(data) : ''"
-                @mousedown.stop="
-                  data.component != 'Page' ? copyComponent(data) : ''
-                "
-              >
-                复制
+      <div class="tree_list">
+        <el-tree
+          :data="pageData.components"
+          :props="defaultProps"
+          default-expand-all
+        >
+          <template slot-scope="{ data }">
+            <div class="centerLR" style="width: 100%" @click.stop>
+              <div class="center">
+                <el-checkbox
+                  :value="filterVal(data.id)"
+                  @change="!data.lock ? checkChange(data) : ''"
+                  v-if="data.component != 'Page'"
+                />
+                <span
+                  class="tree_title"
+                  @click="!data.lock ? checkChange(data) : ''"
+                  >{{ data.componentTitleStr }}</span
+                >
+              </div>
+              <div class="btns">
+                <div @click="moveIndex(data, true)" v-if="!data.lock">上移</div>
+                <div @click="moveIndex(data, false)" v-if="!data.lock">
+                  下移
+                </div>
+                <div @click="redactComponent(data)" v-if="!data.lock">编辑</div>
+                <div
+                  style="color: red"
+                  @click="delComponent(data)"
+                  v-if="!data.lock"
+                >
+                  删除
+                </div>
+                <div
+                  style="color: green"
+                  @click="data.component == 'Page' ? copyPage(data) : ''"
+                  @mousedown.stop="
+                    data.component != 'Page' ? copyComponent(data) : ''
+                  "
+                  v-if="!data.lock"
+                >
+                  {{ data.component == "Page" ? "复制一页" : "复制" }}
+                </div>
+                <div
+                  style="color: green"
+                  @click="
+                    data.component == 'Page' ? copyComponent(data, true) : ''
+                  "
+                  @mousedown.stop="
+                    data.component != 'Page' ? copyComponent(data, true) : ''
+                  "
+                  v-if="data.component != 'Page' && !data.lock"
+                >
+                  拖动
+                </div>
+                <div @click="lockToggle(data)" v-if="data.component != 'Page'">
+                  <i class="el-icon-lock lock_icon" v-if="data.lock"></i>
+                  <i class="el-icon-unlock lock_icon" v-else></i>
+                </div>
               </div>
             </div>
-          </div>
-        </template>
-      </el-tree>
+          </template>
+        </el-tree>
+      </div>
     </div>
   </VueDragResize>
 </template>
@@ -66,10 +95,10 @@ export default {
     return {
       selectComponents: [],
       dragData: {
-        w: 320,
+        w: 500,
         h: 500,
-        x: 460,
-        y: 20,
+        x: 20,
+        y: 500,
         maxWidth: 0,
         maxHeight: 0,
       },
@@ -85,6 +114,8 @@ export default {
       "pageDataRemove",
       "pageDataAdd",
       "setPageAddComponent",
+      "setPageUpdateComponent",
+      "setComponentLock",
     ]),
     //   过滤状态
     filterVal(id) {
@@ -104,6 +135,14 @@ export default {
         }
       )
         .then(() => {
+          if (
+            item.component == "Page" &&
+            this.pageData.components.length <= 1
+          ) {
+            // alert('最后一页不能删除')
+            this.$message.warning("书籍必须存在一页内容");
+            return;
+          }
           this.pageDataRemove(item.id);
           this.$message({
             type: "success",
@@ -138,15 +177,20 @@ export default {
     },
     // 移动位置
     moveIndex(data, type) {
+      console.log(data);
       this.setDataIndex({
         id: data.id,
         type,
       });
     },
     // 复制组件
-    copyComponent(data) {
+    copyComponent(data, flag) {
       // 重新拖拽
       this.setPageAddComponent(JSON.parse(JSON.stringify(data)));
+      if (flag) {
+        // 删除自己
+        this.pageDataRemove(data.id);
+      }
     },
     // 复制页面
     copyPage(data) {
@@ -154,6 +198,19 @@ export default {
         parentId: 0,
         component: JSON.parse(JSON.stringify(data)),
       });
+    },
+    // 编辑组件
+    redactComponent(data) {
+      this.setPageUpdateComponent(data);
+    },
+    // 锁定 or 解锁组件
+    lockToggle(data) {
+      // 如果锁定取消选中状态
+      if (!data.lock && this.filterVal(data.id)) {
+        console.log(data.lock);
+        this.checkChange(data);
+      }
+      this.setComponentLock(data.id);
     },
   },
   watch: {
@@ -175,11 +232,30 @@ export default {
     background-color: #3c4043;
     border-radius: 6px;
     padding: 10px;
-    .tree_title {
-      padding-left: 5px;
+    .tree_list {
+      .tree_title {
+        padding-left: 5px;
+      }
+      /deep/ {
+        .el-tree-node__content {
+          height: 40px;
+        }
+      }
+      min-width: 350px;
+      .lock_icon {
+        font-size: 24px;
+        &.el-icon-lock {
+          color: red;
+        }
+        &.el-icon-unlock {
+          // color: green;
+        }
+      }
     }
+
     .btns {
       display: flex;
+      align-items: center;
       & > div {
         margin-right: 5px;
         font-size: 12px;

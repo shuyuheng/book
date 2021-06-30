@@ -1,6 +1,6 @@
 <template>
   <div class="Adaptive" ref="Adaptive">
-    <div class="center">
+    <div class="center container">
       <div class="center book_out_box" ref="box">
         <div class="container">
           <div id="book">
@@ -159,7 +159,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   padding: 20px 0;
-  overflow: hidden;
+  overflow: auto;
   .book_out_box {
     position: relative;
     left: 0;
@@ -196,6 +196,9 @@ export default {
         justify-content: center;
       }
     }
+  }
+  .container{
+    // padding: 20px 0;
   }
 }
 </style>

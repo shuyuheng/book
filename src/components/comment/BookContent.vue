@@ -1,19 +1,15 @@
 <template>
   <div
     class="BookContent component"
-    title="富文本组件"
+    :class="{ isDrage: isDrage }"
     :style="{
-      margin: componentData.margin.map((num) => num + 'px').join(' '),
       width: componentData.width + 'px',
       height: componentData.height + 'px',
+      left: componentData.x + 'px',
+      top: componentData.y + 'px',
     }"
   >
-    <div
-      class="page_content"
-      :style="{
-        padding: componentData.padding.map((num) => num + 'px').join(' '),
-      }"
-    >
+    <div class="page_content">
       <div v-html="componentData.html" />
       <slot />
     </div>
@@ -32,6 +28,11 @@ export default {
       type: [Object, String, Array, Number],
       required: true,
     },
+    // 是否在拖动状态
+    isDrage: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {};
@@ -43,7 +44,6 @@ export default {
 
 <style lang="scss" scoped>
 .BookContent {
-  position: relative;
   user-select: none;
   min-height: 1rem;
   line-height: 1.5;

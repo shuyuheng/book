@@ -1,24 +1,18 @@
 <template>
   <div
     class="BookVideo component"
-    title="视频组件"
     v-loading="false"
+    :class="{ isDrage: isDrage }"
     element-loading-text="加载中..."
     element-loading-spinner="el-icon-loading"
     :style="{
       width: componentData.width + 'px',
       height: componentData.width + 'px',
-      margin: componentData.margin,
+      left: componentData.x + 'px',
+      top: componentData.y + 'px',
     }"
   >
-    <div
-      class="page_content"
-      :style="{
-        backgroundSize: componentData.size,
-        backgroundPosition: componentData.position,
-        padding: componentData.padding,
-      }"
-    >
+    <div class="page_content">
       <div class="play_box">
         <div
           class="play_box"
@@ -79,6 +73,7 @@
         :src="componentData.value"
         controls
         ref="video"
+        controlsList="nodownload noremoteplayback disablePictureInPicture"
       ></video>
     </el-dialog>
   </div>
@@ -96,6 +91,11 @@ export default {
       type: Object,
       default: "",
     },
+    // 是否在拖动状态
+    isDrage: {
+      type: Boolean,
+      default: false,
+    },
     /* props default end */
   },
   data() {
@@ -109,17 +109,23 @@ export default {
     // 更改播放状态
     changePlay(val) {
       this.isPlay = val;
-      console.log(val);
       this.$nextTick(() => {
         if (this.isPlay) {
+          this.$store.commit("setGlobalPlayEl", this.$refs.video);
           this.$refs.video.play();
+          this.$refs.video["disablePictureInPicture"] = true;
           this.getCurTime();
         } else {
           this.$refs.video.pause();
         }
       });
     },
+    getStatus({ type }) {
+      this.isPlay = type == "play" ? true : false;
+    },
     getCurTime() {
+      this.$refs.video.onplay = this.getStatus;
+      this.$refs.video.onpause = this.getStatus;
       this.$refs.video.ontimeupdate = () => {
         this.curtime =
           (this.$refs.video.currentTime / this.$refs.video.duration) * 100;
@@ -135,7 +141,6 @@ export default {
 
 <style lang="scss" scoped>
 .BookVideo {
-  position: relative;
   user-select: none;
   .page_content {
     width: 100%;

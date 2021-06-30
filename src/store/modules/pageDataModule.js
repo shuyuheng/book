@@ -1,11 +1,10 @@
-
-let treeData = ""
+import { Message } from 'element-ui';
 // 递归遍历组件 by ID
 const treeForEach = (children, id) => {
     for (let i = 0; i < children.length; i++) {
         const item = children[i];
         if (item.id == id) {
-            return treeData = {
+            return {
                 children,
                 item,
                 id,
@@ -13,7 +12,8 @@ const treeForEach = (children, id) => {
             };
 
         } else if (item.children && item.children.length) {
-            treeForEach(item.children, id);
+            let treeData = treeForEach(item.children, id);
+            if (treeData) return treeData
         }
     }
 }
@@ -29,7 +29,10 @@ const pageDataModule = {
                     id: 1,
                     component: "Page",
                     componentTitleStr: "页面",
-                    componentData: {},
+                    componentData: {
+                        width: 800,
+                        height: 1100,
+                    },
                     children: [],
                 },
             ],
@@ -70,7 +73,6 @@ const pageDataModule = {
             // 深度克隆防止污染
             let pageData = JSON.parse(JSON.stringify(state.pageData))
             component = JSON.parse(JSON.stringify(component))
-
             const setIds = (component) => {
                 component.id = pageData.minID;
                 // 添加id+1
@@ -83,11 +85,6 @@ const pageDataModule = {
                 }
             }
             setIds(component)
-
-
-
-
-
             // 如果组件需要拖拽的位置
             if (component.componentData.hasOwnProperty("x")) {
                 component.componentData.x = state.movement.dataX;
@@ -97,8 +94,7 @@ const pageDataModule = {
             if (parentId == 0 || parentId == null) {
                 pageData.components.push(component)
             } else {
-                treeForEach(pageData.components, parentId)
-                let { item } = treeData
+                let { item } = treeForEach(pageData.components, parentId)
                 item.children.push(component)
             }
             // 重新赋值
@@ -108,8 +104,7 @@ const pageDataModule = {
         pageDataRemove(state, id) {
             // 深度克隆防止污染
             let pageData = JSON.parse(JSON.stringify(state.pageData))
-            treeForEach(pageData.components, id)
-            let { children, index } = treeData
+            let { children, index } = treeForEach(pageData.components, id)
             children.splice(index, 1)
             // 重新赋值
             state.pageData = pageData
@@ -119,9 +114,10 @@ const pageDataModule = {
             console.log('修改组件', component);
             // 深度克隆防止污染
             let pageData = JSON.parse(JSON.stringify(state.pageData))
-            treeForEach(pageData.components, component.id)
-            let { children, index } = treeData
+            let { children, index } = treeForEach(pageData.components, component.id)
             children[index] = component
+            // 修改id 强制更新
+            component.id = (typeof component.id) == 'string' ? parseInt(component.id) : component.id + 'u'
             // 重新赋值
             state.pageData = pageData
             console.log('修改完成', pageData);
@@ -143,15 +139,12 @@ const pageDataModule = {
         setDataIndex(state, { id, type }) {
             let pageData = JSON.parse(JSON.stringify(state.pageData))
             // type true上 false下
-            treeForEach(pageData.components, id)
-            let { children, index } = treeData
+            let { children, index } = treeForEach(pageData.components, id)
             if (index == 0 && type == true) {
-                return alert('已经是第一位了')
+                return Message.warning('已经是第一位了')
             } else if (index == children.length - 1 && type == false) {
-                return alert('已经是最后一位了')
+                return Message.warning('已经是最后一位了')
             }
-            // 
-            console.log(treeData);
             let myItem = children[index]
             if (type) {
                 children[index] = children[index - 1]
@@ -163,6 +156,32 @@ const pageDataModule = {
             // 重新赋值
             state.pageData = pageData
         },
+        // 锁定 or 解锁组件
+        setComponentLock(state, id) {
+            const treeFor = (children, lock) => {
+                for (let i = 0; i < children.length; i++) {
+                    const item = children[i];
+                    item.lock = lock
+                    // 取消子集选中状态
+                    let index = state.selectComponents.findIndex(el => el.id == item.id)
+                    if (lock && index != -1) {
+                        state.selectComponents.splice(index, 1)
+                    }
+                    if (item.children && item.children.length) {
+                        treeFor(item.children, lock)
+                    }
+                }
+            }
+            // 深度克隆防止污染
+            let pageData = JSON.parse(JSON.stringify(state.pageData))
+            let { children, index } = treeForEach(pageData.components, id)
+            children[index].lock = !children[index].lock
+            // 编辑子集
+            treeFor(children[index].children, children[index].lock)
+            // 重新赋值
+            state.pageData = pageData
+            console.log(1);
+        }
     },
     actions: {
 

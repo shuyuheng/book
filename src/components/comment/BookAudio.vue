@@ -1,23 +1,23 @@
 <template>
   <div
     class="BookAudio component"
-    title="音频组件"
+    :class="{ isDrage: isDrage }"
     :style="{
       width: componentData.width + 'px',
       height: componentData.width + 'px',
-      margin: componentData.margin,
+      left: componentData.x + 'px',
+      top: componentData.y + 'px',
     }"
   >
-    <div
-      class="page_content"
-      :style="{
-        backgroundSize: componentData.size,
-        backgroundPosition: componentData.position,
-        padding: componentData.padding,
-      }"
-    >
+    <div class="page_content">
       <div class="center" style="width: 1005">
-        <audio ref="audio" :src="componentData.value" controls></audio>
+        <audio
+          ref="audio"
+          :src="componentData.value"
+          controls
+          controlsList="nodownload noremoteplayback disablePictureInPicture"
+          :class="{ disabled: !isPlay }"
+        ></audio>
         <div
           class="play_box"
           :style="{
@@ -74,6 +74,11 @@ export default {
       type: Object,
       default: "",
     },
+    // 是否在拖动状态
+    isDrage: {
+      type: Boolean,
+      default: false,
+    },
     /* props default end */
   },
   data() {
@@ -86,15 +91,20 @@ export default {
   methods: {
     // 更改播放状态
     changePlay(val) {
-      this.isPlay = val;
-      if (this.isPlay) {
+      if (val) {
+        this.$store.commit("setGlobalPlayEl", this.$refs.audio);
         this.$refs.audio.play();
         this.getCurTime();
       } else {
         this.$refs.audio.pause();
       }
     },
+    getStatus({ type }) {
+      this.isPlay = type == "play" ? true : false;
+    },
     getCurTime() {
+      this.$refs.audio.onplay = this.getStatus;
+      this.$refs.audio.onpause = this.getStatus;
       this.$refs.audio.ontimeupdate = () => {
         this.curtime =
           (this.$refs.audio.currentTime / this.$refs.audio.duration) * 100;
@@ -110,7 +120,6 @@ export default {
 
 <style lang="scss" scoped>
 .BookAudio {
-  position: relative;
   user-select: none;
   .page_content {
     width: 100%;
@@ -122,12 +131,14 @@ export default {
     background-size: cover;
     position: relative;
     audio {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -2;
-      opacity: 0;
-      visibility: hidden;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: -9;
+      transition: visibility 1s;
+      &.disabled {
+        visibility: hidden;
+      }
     }
     .play_box {
       width: 60px;

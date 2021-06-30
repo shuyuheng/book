@@ -1,18 +1,18 @@
 <template>
   <div
     class="Book_image component"
-    title="图片组件"
+    :class="{ isDrage: isDrage }"
     :style="{
       width: componentData.width + 'px',
       height: componentData.height + 'px',
-      margin: componentData.margin.map((num) => num + 'px').join(' '),
+      left: componentData.x + 'px',
+      top: componentData.y + 'px',
     }"
   >
     <div
       class="page_content"
       :style="{
         backgroundImage: `url('${componentData.value}')`,
-        padding: componentData.padding.map((num) => num + 'px').join(' '),
       }"
     >
       <slot />
@@ -33,6 +33,11 @@ export default {
       type: Object,
       default: "",
     },
+    // 是否在拖动状态
+    isDrage: {
+      type: Boolean,
+      default: false,
+    },
     /* props default end */
   },
   data() {
@@ -47,6 +52,7 @@ export default {
 
 <style lang="scss" scoped>
 .Book_image {
+  user-select: none;
   .page_content {
     width: 100%;
     height: 100%;

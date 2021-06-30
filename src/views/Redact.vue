@@ -19,10 +19,27 @@
     </div>
     <div class="book_page">
       <ComponentContainer
-        :children.sync="pageData.components"
+        :children="[pageData.components[curPageIndex]]"
         :minID="pageData.minID"
         :redact="true"
+        :maxWidth="pageData.components[curPageIndex].componentData.width"
+        :maxHeight="pageData.components[curPageIndex].componentData.height"
       />
+      <div class="curpage">
+        <el-button
+          type="text"
+          @click="changeCurPage(-1)"
+          :disabled="curPageIndex <= 0"
+          >上一页</el-button
+        >
+        <span>{{ curPageIndex + 1 }}</span>
+        <el-button
+          type="text"
+          @click="changeCurPage(1)"
+          :disabled="curPageIndex >= pageData.components.length - 1"
+          >下一页</el-button
+        >
+      </div>
     </div>
     <!-- 修改弹窗 -->
     <UpdateComData />
@@ -48,11 +65,29 @@ export default {
     }),
   },
   data() {
-    return {};
+    return {
+      curPageIndex: 0,
+    };
   },
   created() {},
+  watch: {
+    pageData: {
+      handler(val) {
+        if (this.curPageIndex >= val.components.length - 1) {
+          this.curPageIndex = val.components.length - 1;
+        }
+      },
+      deep: true,
+    },
+  },
   methods: {
     ...mapMutations("pageDataModule", ["pageDataAdd", "pageDataRemove"]),
+    // 修改当前页
+    changeCurPage(val) {
+      let index = this.curPageIndex;
+      index += Number(val);
+      this.curPageIndex = index;
+    },
     addPage() {
       this.pageDataAdd({
         parentId: 0,
@@ -60,10 +95,14 @@ export default {
           id: 0,
           component: "Page",
           componentTitleStr: "页面",
-          componentData: {},
+          componentData: {
+            width: 800,
+            height: 1100,
+          },
           children: [],
         },
       });
+      this.curPageIndex = this.pageData.components.length - 1;
     },
     // 预览
     previewFn() {
@@ -81,6 +120,7 @@ export default {
   min-height: 100vh;
   padding-left: 460px;
   background-color: #444444;
+  user-select: none;
   .sidebar_box {
     position: fixed;
     top: 0;
@@ -104,6 +144,18 @@ export default {
     flex-direction: column;
     padding-top: 60px;
     align-items: center;
+    .curpage {
+      margin-top: 25px;
+      width: 800px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 25px;
+      span {
+        font-size: 18px;
+        color: white;
+      }
+    }
   }
 }
 </style>

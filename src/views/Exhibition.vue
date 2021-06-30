@@ -90,8 +90,14 @@
         :step="1"
         show-stops
         @input="setPage"
+        
       >
       </el-slider>
+    </div>
+    <!-- 音量 -->
+    <div class="volume_box" v-if="$store.state.playEl">
+      <div class="msg">↑↓可控制音量</div>
+      当前音量：{{ parseInt($store.state.volume * 100) }}%
     </div>
   </div>
 </template>
@@ -197,13 +203,13 @@ export default {
           this.previous();
           break;
         case 38:
-          this.previous();
+          this.$store.commit("setVolume", "add");
           break;
         case 39:
           this.next();
           break;
         case 40:
-          this.next();
+          this.$store.commit("setVolume", "minish");
           break;
 
         default:
@@ -336,6 +342,21 @@ export default {
     transform: translateX(-50%);
     width: 500px;
     z-index: 99;
+  }
+  .volume_box {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 9999999;
+    padding: 20px;
+    color: white;
+    font-size: 20px;
+    .msg {
+      font-size: 12px;
+      color: orange;
+      text-align: center;
+      padding-bottom: 10px;
+    }
   }
 }
 </style>

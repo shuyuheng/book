@@ -41,6 +41,7 @@ export default {
     height: 100%;
     overflow: visible;
     position: relative;
+    overflow: hidden;
     &:before {
       content: "";
       display: table;

@@ -15,7 +15,8 @@ export default {
     monitor() {
       if (["/Exhibition", "/Adaptive"].includes(this.$route.path)) {
         let pageWidth = document.documentElement.offsetWidth;
-        if (pageWidth > 750) {
+        let pageHeight = document.documentElement.offsetHeight;
+        if (pageWidth > 750 && pageHeight > 600) {
           if (this.$route.path != "/Exhibition")
             this.$router.replace("/Exhibition");
         } else {

@@ -3,52 +3,42 @@
     class="utils"
     :class="{
       selectBorder: isSelect && pageDragState == true,
-      redact: isShow || isInclude,
+      redact: isInclude,
     }"
     @mouseenter.stop="pageDragState ? (isSelect = true) : ''"
     @mouseleave.stop="isSelect = false"
-    @click="clickFn"
     @mouseup="isAddPageAddComponent(id)"
     ref="utils"
   >
     <VueDragResize
-      v-if="(isShow || isInclude) && item.component != 'Page'"
-      :isActive="true"
-      :isDraggable="item.componentData.hasOwnProperty('x')"
-      :aspectRatio="item.componentData.aspectRatio"
+      v-if="item.component != 'Page' && !item.lock"
+      :isDraggable="true"
+      :isActive="false"
+      :aspectRatio="!!item.componentData.aspectRatio"
       :w="item.componentData.width"
-      :h="item.componentData.height"
+      :h="
+        item.componentData.aspectRatio
+          ? item.componentData.width
+          : item.componentData.height
+      "
       :x="item.componentData.x"
       :y="item.componentData.y"
       :parentLimitation="true"
       :parentW="maxWidth"
       :parentH="maxHeight"
-      v-on:resizing="resize"
-      v-on:dragging="resize"
+      @resizing="resize"
+      @dragging="resize"
+      :minw="0"
+      :minh="0"
+      ref="dragResize"
     >
-      <div class="centerR page_content" v-if="isShow || isInclude">
-        <el-button
-          type="text"
-          @click.stop="redactComponent"
-          v-if="item.component != 'Page'"
-          >编辑</el-button
-        >
-        <el-button type="text" @click.stop="delComponent">删除</el-button>
-        <div
-          v-if="item.component != 'Page'"
-          class="el-button--text"
-          type="text"
-          style="cursor: all-scroll; margin-left: 6px"
-          @mousedown.stop="dragstart"
-        >
-          拖动
-        </div>
-      </div>
       <div class="size_info">
         <span>{{ item.componentData.x }}*{{ item.componentData.y }}</span>
         <span style="padding: 0 3px">/</span>
         <span
-          >{{ item.componentData.width }}*{{ item.componentData.height }}</span
+          >{{ item.componentData.width }}*{{
+            item.componentData.height || item.componentData.width
+          }}</span
         >
       </div>
     </VueDragResize>
@@ -67,6 +57,14 @@ export default {
     item: {
       type: Object,
       required: true,
+    },
+    maxWidth: {
+      type: [Number, String],
+      default: 200,
+    },
+    maxHeight: {
+      type: [Number, String],
+      default: 200,
     },
   },
   components: {
@@ -89,22 +87,10 @@ export default {
   data() {
     return {
       isSelect: false, //是否向该组件内部插入组件
-      isShow: false,
-      // 父级组件
-      parentEle: "",
-      maxWidth: 800,
-      maxHeight: 1100,
     };
   },
-  created() {
-    document.documentElement.addEventListener("click", (e) => {
-      if (e.target != this.$refs.utils) this.isShow = false;
-    });
-  },
-  mounted() {
-    // 获取外层元素宽高
-    this.getMaxSize();
-  },
+  created() {},
+  mounted() {},
   methods: {
     ...mapMutations("pageDataModule", [
       "pageDataAdd",
@@ -113,81 +99,15 @@ export default {
       "setPageAddComponent",
       "setPageUpdateComponent",
     ]),
-    clickFn() {
-      this.isShow = true;
-      // 编辑之前计算一下最大宽高
-      this.getMaxSize();
-    },
-    dragstart() {
-      // 重新拖拽
-      this.setPageAddComponent(this.item);
-      // 删除自己
-      this.pageDataRemove(this.id);
-    },
-    // 删除
-    delComponent() {
-      this.$confirm(
-        `此操作将删除${this.item.componentTitleStr}，是否继续?`,
-        "删除提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "error",
-        }
-      )
-        .then(() => {
-          this.pageDataRemove(this.id);
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
-    },
-    // 获取最大宽高
-    getMaxSize() {
-      const parentEle = this.$refs.utils.parentElement.parentElement
-        .parentElement;
-      this.parentEle = parentEle;
-      let maxWidth = this.parentEle.offsetWidth;
-      let maxHeight = this.parentEle.offsetHeight;
-      // 不计算剩余宽高 父组件宽高为最大宽高
-      if (this.item.componentData.noComputedSize) {
-      } else {
-        let childrenEle = this.parentEle.querySelectorAll(".computed-height");
-        childrenEle = childrenEle[childrenEle.length - 1];
-        maxHeight = childrenEle.offsetHeight + this.item.componentData.height;
-        maxWidth = childrenEle.offsetWidth;
-      }
-      // 重新赋值最大宽高
-      this.maxWidth = maxWidth;
-      this.maxHeight = maxHeight;
-      // console.log("最大宽高 =>", this.maxWidth, this.maxHeight);
-      // 判断如果是否超过最大宽高
-      if (this.item.componentData.width > maxWidth) {
-        this.item.componentData.width = maxWidth;
-      }
-      if (this.item.componentData.width > maxWidth) {
-        this.item.componentData.height = maxHeight;
-      }
-    },
     // 设置大小位置
     resize(newRect) {
+      // console.log(newRect, "newRect", this.maxWidth, this.maxHeight);
       this.item.componentData.width = newRect.width;
-      this.item.componentData.height = newRect.height;
-      if (this.item.componentData.hasOwnProperty("x")) {
-        this.item.componentData.x = newRect.left;
-        this.item.componentData.y = newRect.top;
+      if (!this.item.componentData.aspectRatio) {
+        this.item.componentData.height = newRect.height;
       }
-    },
-    // 编辑组件
-    redactComponent() {
-      this.setPageUpdateComponent(this.item);
+      this.item.componentData.x = newRect.left;
+      this.item.componentData.y = newRect.top;
     },
   },
 };
@@ -211,11 +131,6 @@ export default {
   .vdr.active:before {
     left: 0 !important;
     top: 0 !important;
-  }
-  .page_content {
-    position: absolute;
-    right: 4px;
-    top: 4px;
   }
   .size_info {
     position: absolute;
