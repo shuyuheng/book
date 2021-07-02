@@ -387,7 +387,7 @@ export default {
             item.componentData.html.includes(this.searchVal)
           ) {
             item.componentData.html = item.componentData.html.replace(
-              this.searchVal,
+              new RegExp(this.searchVal,'g'),
               `<SEARCH_P style="background:#ff9813;">${this.searchVal}</SEARCH_P>`
             );
             this.searchList.push({

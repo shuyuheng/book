@@ -20,16 +20,6 @@ const routes = [
     component: () => import('../views/Exhibition.vue')
   },
   {
-    path: '/Adaptive',
-    name: 'Adaptive',
-    component: () => import('../views/Adaptive.vue')
-  },
-  {
-    path: '/Demo',
-    name: 'Demo',
-    component: () => import('../views/Demo.vue')
-  },
-  {
     path: '*',
     name: '404',
     component: () => import('../views/404.vue')
