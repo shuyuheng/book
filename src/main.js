@@ -7,6 +7,8 @@ import ElementUI from 'element-ui';
 import '@/assets/css/reset.css'
 // Common style
 import '@/assets/css/common.scss'
+// font
+import '@/assets/css/font.scss'
 // Automatic import component
 const Components = require.context('../src/components/comment', true, /\.vue/)
 Components.keys().map(key => {

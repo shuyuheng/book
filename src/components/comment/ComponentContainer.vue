@@ -13,6 +13,7 @@
       @handleClose="handleClose(`com${item.id}`)"
       :zoom="zoom"
       :title="item.componentTitleStr"
+      :boxSize="boxSize"
     >
       <utils
         slot="utils"
@@ -53,7 +54,7 @@ export default {
     },
     zoom: {
       type: [Number, String],
-      default: 1,
+      default: "auto",
     },
     maxWidth: {
       type: [Number, String],
@@ -62,6 +63,13 @@ export default {
     maxHeight: {
       type: [Number, String],
       default: 200,
+    },
+    // 外部元素宽高
+    boxSize: {
+      type: [Object, String],
+      default: () => {
+        return "";
+      },
     },
   },
   data() {

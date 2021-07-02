@@ -9,6 +9,7 @@
     @mouseleave.stop="isSelect = false"
     @mouseup="isAddPageAddComponent(id)"
     ref="utils"
+    @click="computedChick"
   >
     <VueDragResize
       v-if="item.component != 'Page' && !item.lock"
@@ -87,6 +88,8 @@ export default {
   data() {
     return {
       isSelect: false, //是否向该组件内部插入组件
+      timer: null,
+      clickComputed: false, //验证双击锁
     };
   },
   created() {},
@@ -98,6 +101,7 @@ export default {
       "isAddPageAddComponent",
       "setPageAddComponent",
       "setPageUpdateComponent",
+      "pageDataUpdate",
     ]),
     // 设置大小位置
     resize(newRect) {
@@ -108,6 +112,24 @@ export default {
       }
       this.item.componentData.x = newRect.left;
       this.item.componentData.y = newRect.top;
+    },
+    // 双击
+    dblclick() {
+      let component = JSON.parse(JSON.stringify(this.item));
+      component.componentData.x = 0;
+      component.componentData.y = 0;
+      component.componentData.width = this.maxWidth;
+      component.componentData.height = this.maxHeight;
+      this.pageDataUpdate(component);
+    },
+    // pc端验证双击
+    computedChick(e) {
+      if (this.timer) clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.clickComputed = false;
+      }, 250);
+      if (this.clickComputed) this.dblclick(e);
+      this.clickComputed = true;
     },
   },
 };

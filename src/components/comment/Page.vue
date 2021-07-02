@@ -2,8 +2,9 @@
   <div
     class="Page component"
     :style="{
-      transform: `scale(${zoom})`,
+      transform: `scale(${computedZoom})`,
     }"
+    ref="page"
   >
     <div class="page_content">
       <slot />
@@ -17,14 +18,92 @@ export default {
   props: {
     zoom: {
       type: [Number, String],
-      default: 1,
+      default: "auto",
+    },
+    /* props default start */
+    componentData: {
+      type: [Object, String, Array, Number],
+      required: true,
+    },
+    item: {
+      type: Object,
+      default: "",
+    },
+    // 是否在拖动状态
+    isDrage: {
+      type: Boolean,
+      default: false,
+    },
+    /* props default end */
+    // 外部元素宽高
+    boxSize: {
+      type: [Object, String],
+      default: () => {
+        return "";
+      },
     },
   },
   data() {
-    return {};
+    return {
+      componentZoom: 1,
+      cWidth: 800,
+      cHeight: 1100,
+      events: [""],
+    };
   },
-  created() {},
-  methods: {},
+  computed: {
+    computedZoom() {
+      if (this.zoom != "auto") return this.zoom;
+      else return this.componentZoom;
+    },
+  },
+  created() {
+    // console.log(this.componentData);
+  },
+  mounted() {
+    window.addEventListener("resize", this.resize);
+    // 后期执行函数
+    for (let i = 0; i < this.events.length; i++) {
+      let key = this.events[i];
+      this.$nextTick(this[key]);
+    }
+  },
+  watch: {
+    boxSize: {
+      handler() {
+        this.resize();
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
+  methods: {
+    resize() {
+      if (!this.$refs.page) {
+        this.events.push("resize");
+        return;
+      }
+      if (this.boxSize) {
+        this.cWidth = this.boxSize.width;
+        this.cHeight = this.boxSize.height;
+      } else {
+        let container = this.$refs.page.parentElement.parentElement;
+        this.cWidth = container.offsetWidth;
+        this.cHeight = container.offsetHeight;
+      }
+      this.setZoome();
+    },
+    // 设置缩放
+    setZoome() {
+      let width = this.componentData.width;
+      let height = this.componentData.height;
+      // 获取最小比例
+      this.componentZoom = Math.min(this.cWidth / width, this.cHeight / height);
+    },
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.resize);
+  },
 };
 </script>
 

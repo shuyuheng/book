@@ -75,6 +75,9 @@
           </template>
         </el-tree>
       </div>
+      <div class="all-btns">
+        <el-button type="text" @click="openDelAll">批量删除</el-button>
+      </div>
     </div>
   </VueDragResize>
 </template>
@@ -89,11 +92,11 @@ export default {
   computed: {
     ...mapState({
       pageData: (state) => state.pageDataModule.pageData,
+      selectComponents: (state) => state.pageDataModule.selectComponents,
     }),
   },
   data() {
     return {
-      selectComponents: [],
       dragData: {
         w: 500,
         h: 500,
@@ -116,6 +119,8 @@ export default {
       "setPageAddComponent",
       "setPageUpdateComponent",
       "setComponentLock",
+      "setSelectComponents",
+      "deleteSelectComponents",
     ]),
     //   过滤状态
     filterVal(id) {
@@ -158,10 +163,7 @@ export default {
     },
     //   切换选中状态
     checkChange(data) {
-      let index = this.selectComponents.findIndex((item) => item.id == data.id);
-      index == -1
-        ? this.selectComponents.push(data)
-        : this.selectComponents.splice(index, 1);
+      this.setSelectComponents(data);
     },
     onActivated() {
       let el = window;
@@ -212,10 +214,28 @@ export default {
       }
       this.setComponentLock(data.id);
     },
-  },
-  watch: {
-    selectComponents(val) {
-      this.$store.state.pageDataModule.selectComponents = val;
+    // 批量删除前确认框
+    openDelAll() {
+      if (!this.selectComponents.length)
+        return this.$message.warning("未选中组件");
+      this.$confirm("此操作将删除这些组件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.deleteSelectComponents();
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
   },
 };
@@ -232,6 +252,8 @@ export default {
     background-color: #3c4043;
     border-radius: 6px;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
     .tree_list {
       .tree_title {
         padding-left: 5px;
@@ -264,6 +286,12 @@ export default {
           color: orange;
         }
       }
+    }
+    .all-btns {
+      overflow: hidden;
+      background-color: #333;
+      margin-top: auto;
+      padding: 10px;
     }
   }
 }

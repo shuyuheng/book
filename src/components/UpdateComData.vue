@@ -6,7 +6,7 @@
       direction="ltr"
       :before-close="handleClose"
     >
-      <div class="update_content" @keydown.enter="submitForm('ruleForm')">
+      <div class="update_content">
         <el-form
           ref="ruleForm"
           :model="updateData.componentData"
@@ -15,6 +15,33 @@
         >
           <el-form-item label="组件名称">
             <el-input v-model.trim="updateData.componentTitleStr"></el-input>
+          </el-form-item>
+          <el-form-item label="字体" v-if="updateKeys.includes('fontFamily')">
+            <el-select
+              v-model="updateData.componentData.fontFamily"
+              placeholder="请选择"
+              :popper-append-to-body="false"
+              :style="{
+                fontFamily: updateData.componentData.fontFamily,
+              }"
+              class="font-select"
+            >
+              <el-option
+                v-for="item in fontFamilys"
+                :key="item.id"
+                :label="item.title"
+                :value="item.font"
+              >
+                <div
+                  :style="{
+                    fontFamily: item.font,
+                  }"
+                  class="font-show-box"
+                >
+                  {{ item.title }}
+                </div>
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="组件值" v-if="updateKeys.includes('value')">
             <el-input v-model.trim="updateData.componentData.value"></el-input>
@@ -43,6 +70,12 @@
               v-model.trim="updateData.componentData.height"
               type="number"
               :disabled="updateData.component == 'Page'"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="圆角" v-if="updateKeys.includes('borderRadius')">
+            <el-input
+              v-model.trim="updateData.componentData.borderRadius"
+              type="number"
             ></el-input>
           </el-form-item>
           <el-form-item label="富文本" v-if="updateKeys.includes('html')">
@@ -80,6 +113,28 @@ export default {
       //   https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg
       //  验证规则
       prop: [],
+      fontFamilys: [
+        {
+          id: 0,
+          title: "english",
+          font: "Roboto-Medium",
+        },
+        {
+          id: 1,
+          title: "黑体",
+          font: "SourceHanSansCN-Medium",
+        },
+        {
+          id: 2,
+          title: "细线",
+          font: "Roboto-Thin",
+        },
+        {
+          id: 3,
+          title: "微软雅黑",
+          font: "Microsoft YaHei",
+        },
+      ],
     };
   },
   components: {
@@ -133,8 +188,7 @@ export default {
       // this.updateData.componentData.height = "1100";
       // 可以转为数字的都转为数字
       for (const key in this.updateData.componentData) {
-        console.log(!isNaN(this.updateData.componentData[key]), key);
-        if (!isNaN(this.updateData.componentData[key])) {
+        if (/^\d+$/.test(this.updateData.componentData[key])) {
           this.updateData.componentData[key] = Number(
             this.updateData.componentData[key]
           );
@@ -163,8 +217,16 @@ export default {
 .UpdateComData {
   .update_content {
     padding: 20px;
-    max-height: 95vh;
-    overflow: auto;
+    // max-height: 95vh;
+    // overflow: auto;
+    .font-show-box {
+      font-weight: normal;
+    }
+    .font-select {
+      /deep/.el-input__inner {
+        font-family: inherit;
+      }
+    }
   }
 }
 </style>

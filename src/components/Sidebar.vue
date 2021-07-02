@@ -50,7 +50,7 @@ export default {
         {
           id: 0,
           parentId: 0,
-          componentTitleStr: "图片组件",
+          componentTitleStr: "背景容器",
           component: "BookImage",
           lock: false,
           componentData: {
@@ -60,6 +60,8 @@ export default {
             y: 0,
             value:
               "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
+            bgColor: "",
+            borderRadius: 0,
           },
           children: [],
         },
@@ -75,6 +77,7 @@ export default {
             height: 150,
             x: 0,
             y: 0,
+            fontFamily: "Microsoft YaHei",
           },
           children: [],
         },

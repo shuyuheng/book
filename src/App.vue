@@ -8,7 +8,7 @@
 export default {
   created() {},
   mounted() {
-    window.addEventListener("resize", this.monitor);
+    // window.addEventListener("resize", this.monitor);
   },
   methods: {
     // 监听宽度适配对应显示页面
@@ -28,7 +28,7 @@ export default {
   },
   watch: {
     "$route.path"() {
-      this.monitor();
+      // this.monitor();
     },
   },
   destroyed() {

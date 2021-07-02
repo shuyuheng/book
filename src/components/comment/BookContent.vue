@@ -10,7 +10,12 @@
     }"
   >
     <div class="page_content">
-      <div v-html="componentData.html" />
+      <div
+        v-html="componentData.html"
+        :style="{
+          fontFamily: componentData.fontFamily,
+        }"
+      />
       <slot />
     </div>
     <slot name="utils" />

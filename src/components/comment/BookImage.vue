@@ -13,6 +13,8 @@
       class="page_content"
       :style="{
         backgroundImage: `url('${componentData.value}')`,
+        backgroundColor: componentData.bgColor,
+        borderRadius: componentData.borderRadius + 'px',
       }"
     >
       <slot />

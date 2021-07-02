@@ -102,6 +102,7 @@ const pageDataModule = {
         },
         // 删除组件
         pageDataRemove(state, id) {
+            console.log(11);
             // 深度克隆防止污染
             let pageData = JSON.parse(JSON.stringify(state.pageData))
             let { children, index } = treeForEach(pageData.components, id)
@@ -116,6 +117,7 @@ const pageDataModule = {
             let pageData = JSON.parse(JSON.stringify(state.pageData))
             let { children, index } = treeForEach(pageData.components, component.id)
             children[index] = component
+            console.log(children, 'children');
             // 修改id 强制更新
             component.id = (typeof component.id) == 'string' ? parseInt(component.id) : component.id + 'u'
             // 重新赋值
@@ -181,6 +183,22 @@ const pageDataModule = {
             // 重新赋值
             state.pageData = pageData
             console.log(1);
+        },
+        // 选中组件
+        setSelectComponents(state, component) {
+            let index = state.selectComponents.findIndex((item) => item.id == component.id);
+            index == -1
+                ? state.selectComponents.push(component)
+                : state.selectComponents.splice(index, 1);
+        },
+        // 删除所有选中 （批量删除）
+        deleteSelectComponents(state) {
+            state.selectComponents.forEach(item => {
+                // 删除
+                this.commit('pageDataModule/pageDataRemove', item.id)
+            })
+            // 清空选中
+            state.selectComponents = []
         }
     },
     actions: {

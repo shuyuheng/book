@@ -5,6 +5,7 @@ const resolve = dir => {
 }
 module.exports = {
     publicPath: '',
+    outputDir: './dist',
     assetsDir: 'assets',
     // 关闭生产环境源文件展示 加速
     productionSourceMap: false,

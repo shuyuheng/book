@@ -24,6 +24,10 @@
         :redact="true"
         :maxWidth="pageData.components[curPageIndex].componentData.width"
         :maxHeight="pageData.components[curPageIndex].componentData.height"
+        :boxSize="{
+          width:800,
+          height:1100
+        }"
       />
       <div class="curpage">
         <el-button
@@ -121,6 +125,7 @@ export default {
   padding-left: 460px;
   background-color: #444444;
   user-select: none;
+  overflow: auto;
   .sidebar_box {
     position: fixed;
     top: 0;
