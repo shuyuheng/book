@@ -9,6 +9,13 @@ export default {
   created() {},
   mounted() {
     this.monitor();
+    let V = 1;
+    let v = localStorage.getItem("v");
+    if (!v || v < V) {
+      localStorage.clear();
+      localStorage.setItem("v", V);
+      alert('清除数据了')
+    }
   },
   methods: {
     // 移动端不能编辑
